@@ -1,13 +1,16 @@
 ophan-sparks
 ============
 
-Server-generated pageview graphs (PNG) for Guardian's Ophan.
+Server-generated pageview graphs (PNG) for Guardian's Ophan. A url like this:
 ```
-http://localhost:3000/?path=/technology/2013/dec/27/facebook-dead-and-buried-to-teens-research-finds
+http://example.com:3000/?path=/technology/2013/dec/27/facebook-dead-and-buried-to-teens-research-finds
 ```
+Should return a PNG (100x40px) like this:
+
+![example](./example.png)
 
 ## Installation
 
     $ npm install
 
-Unless previously installed you'll _need_ __Cairo__. For system-specific installation view the [Wiki](https://github.com/LearnBoost/node-canvas/wiki/_pages) from the [node-canvas](https://github.com/LearnBoost/node-canvas) project.
+Unless previously installed, you'll need __Cairo__. For system-specific installation view the [Wiki](https://github.com/LearnBoost/node-canvas/wiki/_pages) from the [node-canvas](https://github.com/LearnBoost/node-canvas) project.
