@@ -5,7 +5,7 @@ Server-generated pageview graphs (PNG) for Guardian's Ophan. A url like this:
 ```
 http://example.com:3000/?path=/technology/2013/dec/27/facebook-dead-and-buried-to-teens-research-finds
 ```
-Should return a PNG (100x40px) like this:
+...should return a PNG (100x40px) like this:
 
 ![example](./example.png)
 
