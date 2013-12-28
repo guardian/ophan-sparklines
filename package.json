@@ -1,0 +1,24 @@
+{
+  "name": "sparky",
+  "version": "0.0.0",
+  "description": "ophan-sparks ============",
+  "main": "app.js",
+  "dependencies": {
+    "canvas": "~1.1.2",
+    "lodash": "~2.4.1"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/stephanfowler/ophan-sparks.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/stephanfowler/ophan-sparks/issues"
+  },
+  "homepage": "https://github.com/stephanfowler/ophan-sparks"
+}
