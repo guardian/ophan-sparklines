@@ -1,7 +1,4 @@
-
-/**
- * Module dependencies.
- */
+"use strict";
 
 var opts = {
         width:                 100,
@@ -10,16 +7,15 @@ var opts = {
         pvmHot:                50,    // pageviews-per-min to qualify as 'hot'
         pvmWarm:               25,    // pageviews-per-min to qualify as 'warm'
         pvmPeriod:             5      // num of recent datapoints over which to calc pageviews
-    }
-  , Canvas = require('canvas')
-  , http = require('http')
-  , url = require('url')
-  , fs = require('fs')
-  , _ = require('lodash');
+    },
+
+    Canvas = require('canvas'),
+    http = require('http'),
+    url = require('url'),
+    _ = require('lodash');
 
 function prepareSeries(data) {
-    var simpleSeries,
-        slots = opts.width,
+    var slots = opts.width,
         graphs = [
             {name: 'Other',    data: [], color: 'd61d00', max: 0}, // required
             {name: 'Google',   data: [], color: '89A54E', max: 0},
@@ -37,7 +33,7 @@ function prepareSeries(data) {
                 }) || graphs[0]; // ...defaulting to the first ('Other')
 
             // Drop the last data point
-            s.data.pop(); 
+            s.data.pop();
             
             // How many 1 min points are we adding into each slot
             minsPerSlot = Math.max(1, Math.floor(s.data.length / slots));
@@ -60,18 +56,22 @@ function prepareSeries(data) {
     }
 }
 
+function numWithCommas(x) {
+    return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+}
+
 function draw(series, totalHits, response) {
     var globalMax = _.max(_.pluck(series, 'max')),
         length = ((series[0] || {}).data || []).length || 0,
         xStep = length < 50 ? length < 30 ? 3 : 2 : 1,
         yScale = Math.round(Math.max(5, Math.min(opts.graphHeight, globalMax))) / globalMax,
-        canvas = new Canvas(opts.width, opts.height), 
+        canvas = new Canvas(opts.width, opts.height),
         c = canvas.getContext('2d');
 
     _.each(series, function(s) {
         c.beginPath();
         _.each(s.data, function(y, x){
-            if (!x && length === opts.width) { return; } 
+            if (!x && length === opts.width) { return; }
             c.lineTo(opts.width + (x - length + 1)*xStep - 1, opts.graphHeight - yScale*y + 2); // + 2 so thick lines don't get cropped at top
         });
         c.lineWidth = s.activity;
@@ -82,7 +82,7 @@ function draw(series, totalHits, response) {
     c.font = 'bold 9px Arial';
     c.textAlign = 'right';
     c.fillStyle = '#999999';
-    c.fillText(numWithCommas(totalHits), 99, 39); 
+    c.fillText(numWithCommas(totalHits), 99, 39);
 
     canvas.toBuffer(function(err, buf){
         response.writeHead(200, {
@@ -93,18 +93,6 @@ function draw(series, totalHits, response) {
         response.end(buf);
     });
 }
-
-function numWithCommas(x) {
-    var pattern = /(-?\d+)(\d{3})/;
-
-    if(typeof x === 'undefined') { return ''; }
-
-    x = x.toString();
-    while (pattern.test(x)) {
-        x = x.replace(pattern, "$1,$2");
-    }
-    return x;
-};
 
 http.createServer(function (req, res) {
     var params = url.parse(req.url, true).query;
@@ -133,8 +121,7 @@ http.createServer(function (req, res) {
                     draw(prepareSeries(rawData), rawData.totalHits, res);
                 } else {
                     res.end();
-                };
-
+                }
             });
         }
     ).end();
