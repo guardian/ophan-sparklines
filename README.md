@@ -10,4 +10,4 @@ http://localhost:3000/?path=/technology/2013/dec/27/facebook-dead-and-buried-to-
 
     $ npm install
 
-Unless previously installed you'll _need_ __Cairo__. For system-specific installation view the [Wiki](https://github.com/LearnBoost/node-canvas/wiki/_pages).
+Unless previously installed you'll _need_ __Cairo__. For system-specific installation view the [Wiki](https://github.com/LearnBoost/node-canvas/wiki/_pages) from the [node-canvas](https://github.com/LearnBoost/node-canvas) project.
