@@ -13,4 +13,4 @@ Should return a PNG (100x40px) like this:
 
     $ npm install
 
-Unless previously installed, you'll need __Cairo__. For system-specific installation view the [Wiki](https://github.com/LearnBoost/node-canvas/wiki/_pages) from the [node-canvas](https://github.com/LearnBoost/node-canvas) project.
+Unless previously installed, you'll need __Cairo__. For installation, see the [Wiki](https://github.com/LearnBoost/node-canvas/wiki/_pages) from the [node-canvas](https://github.com/LearnBoost/node-canvas) project.
