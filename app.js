@@ -6,7 +6,7 @@
 var opts = {
         width:                 100,
         height:                40,
-        graphHeight:           30,
+        graphHeight:           29,
         pvmHot:                50,    // pageviews-per-min to qualify as 'hot'
         pvmWarm:               25,    // pageviews-per-min to qualify as 'warm'
         pvmPeriod:             5      // num of recent datapoints over which to calc pageviews
@@ -28,14 +28,19 @@ function prepareSeries(data) {
 
     if(data.seriesData && data.seriesData.length) {
         _.each(data.seriesData, function(s){
-
+            var graph,
+                minsPerSlot;
+            
             // Pick the relevant graph...
-            var graph = _.find(graphs, function(g){
+            graph = _.find(graphs, function(g){
                     return g.name === s.name;
                 }) || graphs[0]; // ...defaulting to the first ('Other')
 
+            // Drop the last data point
+            s.data.pop(); 
+            
             // How many 1 min points are we adding into each slot
-            var minsPerSlot = Math.max(1, Math.floor(s.data.length / slots));
+            minsPerSlot = Math.max(1, Math.floor(s.data.length / slots));
 
             // ...sum the data into each graph
             _.each(_.last(s.data, minsPerSlot*slots), function(d,index) {
@@ -50,43 +55,57 @@ function prepareSeries(data) {
             var pvm = _.reduce(_.last(graph.data, opts.pvmPeriod), function(m, n){ return m + n; }, 0) / opts.pvmPeriod;
             // classify activity on scale of 1,2,3
             graph.activity = pvm < opts.pvmHot ? pvm < opts.pvmWarm ? 1 : 2 : 3;
-            // Round the datapoints
-            graph.data = _.map(graph.data, function(d) { return Math.round(d*10)/10; });
             return graph;
         });
     }
 }
 
-function draw(series, res) {
-    var maxMax = _.max(_.pluck(series, 'max')),
-        scale = Math.round(Math.max(5, Math.min(opts.graphHeight, maxMax))) / maxMax,
-        points = series[0].data.length,
-        step = points < 50 ? points < 30 ? 3 : 2 : 1,
+function draw(series, totalHits, response) {
+    var globalMax = _.max(_.pluck(series, 'max')),
+        length = ((series[0] || {}).data || []).length || 0,
+        xStep = length < 50 ? length < 30 ? 3 : 2 : 1,
+        yScale = Math.round(Math.max(5, Math.min(opts.graphHeight, globalMax))) / globalMax,
         canvas = new Canvas(opts.width, opts.height), 
         c = canvas.getContext('2d');
 
     _.each(series, function(s) {
         c.beginPath();
         _.each(s.data, function(y, x){
-            if (!x && points === opts.width) { return; } 
-            c.lineTo(opts.width + (x - points + 1)*step - 1, opts.graphHeight - y*scale + 2); // + 2 so thick lines don't get cropped at top
+            if (!x && length === opts.width) { return; } 
+            c.lineTo(opts.width + (x - length + 1)*xStep - 1, opts.graphHeight - yScale*y + 2); // + 2 so thick lines don't get cropped at top
         });
         c.lineWidth = s.activity;
         c.strokeStyle = '#' + s.color;
         c.stroke();
     });
 
+    c.font = 'bold 9px Arial';
+    c.textAlign = 'right';
+    c.fillStyle = '#999999';
+    c.fillText(numWithCommas(totalHits), 99, 39); 
+
     canvas.toBuffer(function(err, buf){
-        res.writeHead(200, {
+        response.writeHead(200, {
             'Content-Type': 'image/png',
             'Content-Length': buf.length,
-            'Cache-Control': 'public,max-age=5'
+            'Cache-Control': 'public,max-age=30'
         });
-        res.end(buf);
+        response.end(buf);
     });
 }
 
-// e.g. http://localhost:3000/?path=/world/2013/dec/27/judge-rules-nsa-phone-data-collection-legal
+function numWithCommas(x) {
+    var pattern = /(-?\d+)(\d{3})/;
+
+    if(typeof x === 'undefined') { return ''; }
+
+    x = x.toString();
+    while (pattern.test(x)) {
+        x = x.replace(pattern, "$1,$2");
+    }
+    return x;
+};
+
 http.createServer(function (req, res) {
     var params = url.parse(req.url, true).query;
     
@@ -111,10 +130,7 @@ http.createServer(function (req, res) {
                 try { rawData = JSON.parse(str); } catch(e) { rawData = {}; }
 
                 if (rawData.totalHits > 0 && _.isArray(rawData.seriesData)) {
-                    _.each(rawData.seriesData, function(s){
-                        s.data.pop(); // Drop the last data point
-                    });
-                    draw(prepareSeries(rawData), res);
+                    draw(prepareSeries(rawData), rawData.totalHits, res);
                 } else {
                     res.end();
                 };
@@ -124,5 +140,3 @@ http.createServer(function (req, res) {
     ).end();
 
 }).listen(3000);
-
-console.log('Server running on port 3000');
