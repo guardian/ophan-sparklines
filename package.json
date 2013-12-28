@@ -15,7 +15,7 @@
     "type": "git",
     "url": "git://github.com/stephanfowler/ophan-sparks.git"
   },
-  "author": "",
+  "author": "http://stephanfowler.com",
   "license": "ISC",
   "bugs": {
     "url": "https://github.com/stephanfowler/ophan-sparks/issues"
