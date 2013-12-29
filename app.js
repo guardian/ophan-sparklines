@@ -115,7 +115,7 @@ function draw(series, totalHits, response) {
 http.createServer(function (req, res) {
     var params = url.parse(req.url, true).query;
     
-    if (!params.path) {
+    if (!params.page) {
         res.end();
         return;
     }
@@ -123,7 +123,7 @@ http.createServer(function (req, res) {
     http.request(
         {
           host: 'api.ophan.co.uk',
-          path: '/api/breakdown?path=' + url.parse(params.path).pathname
+          path: '/api/breakdown?path=' + url.parse(params.page).pathname
         },
         function(proxied) {
             var str = '';

@@ -5,7 +5,7 @@ Server-generated graphs for Guardian pageview data from Ophan.
 
 A url like this:
 ```
-http://example.com:3000/?path=/technology/2013/dec/27/facebook-dead-and-buried-to-teens-research-finds
+http://example.com:3000/?page=http://www.theguardian.com/technology/2013/dec/27/facebook-dead-and-buried-to-teens-research-finds
 ```
 ...should return a PNG (100x40px) like this:
 
