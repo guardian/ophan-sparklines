@@ -30,16 +30,15 @@ function resample(input, newLen) {
             rc = Math.min(Math.ceil(right), inputLen - 1);
 
         return (
-            _.reduce(_.range(lc, rf), function(sum, i) { return sum + input[i]; }, 0)
-            + input[lf] * (lc - left)
-            + input[rc] * (right - rf)
+            _.reduce(_.range(lc, rf), function(sum, i) { return sum + input[i]; }, 0) +
+            input[lf] * (lc - left) +
+            input[rc] * (right - rf)
         ) / span;
-    })
+    });
 }
 
 function prepareSeries(data) {
-    var slots = opts.width,
-        graphs = [
+    var graphs = [
             {name: 'Other',    data: [], color: 'd61d00', max: 0}, // required
             {name: 'Google',   data: [], color: '89A54E', max: 0},
             {name: 'Guardian', data: [], color: '4572A7', max: 0}
@@ -47,8 +46,7 @@ function prepareSeries(data) {
 
     if(data.seriesData && data.seriesData.length) {
         _.each(data.seriesData, function(s){
-            var graph,
-                minsPerSlot;
+            var graph;
             
             // Pick the relevant graph...
             graph = _.find(graphs, function(g){
@@ -125,7 +123,7 @@ http.createServer(function (req, res) {
     http.request(
         {
           host: 'api.ophan.co.uk',
-          path: '/api/breakdown?path=' + url.parse(params.path).pathname 
+          path: '/api/breakdown?path=' + url.parse(params.path).pathname
         },
         function(proxied) {
             var str = '';
