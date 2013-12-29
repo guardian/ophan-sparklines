@@ -14,6 +14,29 @@ var opts = {
     url = require('url'),
     _ = require('lodash');
 
+function resample(input, newLen) {
+    var inputLen = input.length,
+        span;
+       
+    if (inputLen <= newLen) { return input; }
+   
+    span = inputLen / newLen;
+
+    return _.map(_.range(0, inputLen, span), function(left){
+        var right = left + span,
+            lf = Math.floor(left),
+            lc = Math.ceil(left),
+            rf = Math.floor(right),
+            rc = Math.min(Math.ceil(right), inputLen - 1);
+
+        return (
+            _.reduce(_.range(lc, rf), function(sum, i) { return sum + input[i]; }, 0)
+            + input[lf] * (lc - left)
+            + input[rc] * (right - rf)
+        ) / span;
+    })
+}
+
 function prepareSeries(data) {
     var slots = opts.width,
         graphs = [
@@ -34,19 +57,16 @@ function prepareSeries(data) {
 
             // Drop the last data point
             s.data.pop();
-            
-            // How many 1 min points are we adding into each slot
-            minsPerSlot = Math.max(1, Math.floor(s.data.length / slots));
 
             // ...sum the data into each graph
-            _.each(_.last(s.data, minsPerSlot*slots), function(d,index) {
-                var i = Math.floor(index / minsPerSlot);
-                graph.data[i] = (graph.data[i] || 0) + (d.count / minsPerSlot);
-                graph.max = Math.max(graph.max, graph.data[i]);
+            _.each(s.data, function(d,i) {
+                graph.data[i] = (graph.data[i] || 0) + d.count;
             });
         });
 
         return _.map(graphs, function(graph){
+            graph.data = resample(graph.data, opts.width);
+            graph.max = _.max(graph.data);
             // recent pageviews per minute average
             var pvm = _.reduce(_.last(graph.data, opts.pvmPeriod), function(m, n){ return m + n; }, 0) / opts.pvmPeriod;
             // classify activity on scale of 1,2,3
@@ -105,7 +125,7 @@ http.createServer(function (req, res) {
     http.request(
         {
           host: 'api.ophan.co.uk',
-          path: '/api/breakdown?path=' + params.path
+          path: '/api/breakdown?path=' + url.parse(params.path).pathname 
         },
         function(proxied) {
             var str = '';
