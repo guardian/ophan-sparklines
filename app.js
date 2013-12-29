@@ -50,13 +50,13 @@ function prepareSeries(data) {
             
             // Pick the relevant graph...
             graph = _.find(graphs, function(g){
-                    return g.name === s.name;
-                }) || graphs[0]; // ...defaulting to the first ('Other')
+                return g.name === s.name;
+            }) || graphs[0]; // ...defaulting to the first ('Other')
 
             // Drop the last data point
             s.data.pop();
 
-            // ...sum the data into each graph
+            // ...sum the data into the graph
             _.each(s.data, function(d,i) {
                 graph.data[i] = (graph.data[i] || 0) + d.count;
             });
