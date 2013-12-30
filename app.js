@@ -46,12 +46,10 @@ function collateOphanData(data) {
 
     if(data.seriesData && data.seriesData.length) {
         _.each(data.seriesData, function(s){
-            var graph;
-            
             // Pick the relevant graph...
-            graph = _.find(graphs, function(g){
-                return g.name === s.name;
-            }) || graphs[0]; // ...defaulting to the first ('Other')
+            var graph = _.find(graphs, function(g){
+                    return g.name === s.name;
+                }) || graphs[0]; // ...defaulting to the first ('Other')
 
             // Drop the last data point
             s.data.pop();
@@ -89,7 +87,7 @@ function numWithCommas(x) {
     return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 }
 
-function draw(data) {
+function draw(data, params) {
     var xStep = data.points < 50 ? data.points < 30 ? 3 : 2 : 1,
         yScale = Math.round(Math.max(5, Math.min(opts.graphHeight, data.max))) / (data.max || 1),
         canvas = new Canvas(opts.width, opts.height),
@@ -105,6 +103,19 @@ function draw(data) {
         c.strokeStyle = '#' + s.color;
         c.stroke();
     });
+
+    if (params.mark) {
+        _.each(params.mark.split(','), function(mark) {
+            mark = mark.split(':');
+            c.strokeStyle = '#' + (mark[1] || '999999');
+            mark = (parseInt(mark[0], 10) - data.timeStart) / (data.timeEnd - data.timeStart);
+            mark = Math.floor(opts.width + (mark - 1)*data.points*xStep);
+            c.beginPath();
+            c.lineTo(mark, 0);
+            c.lineTo(mark, opts.graphHeight + 3);
+            c.stroke();
+        });
+    }
 
     c.font = 'bold 9px Arial';
     c.textAlign = 'right';
@@ -138,7 +149,7 @@ http.createServer(function (req, res) {
                 try { ophanData = JSON.parse(str); } catch(e) { ophanData = {}; }
 
                 if (ophanData.totalHits > 0 && _.isArray(ophanData.seriesData)) {
-                    draw(collateOphanData(ophanData)).toBuffer(function(err, buf){
+                    draw(collateOphanData(ophanData), params).toBuffer(function(err, buf){
                         res.writeHead(200, {
                             'Content-Type': 'image/png',
                             'Content-Length': buf.length,
