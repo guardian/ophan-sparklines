@@ -1,5 +1,5 @@
-ophan-sparks
-============
+Pageview Sparks
+===============
 
 Server-generated graphs of Guardian pageviews, using Ophan data. A url like this:
 ```
