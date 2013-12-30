@@ -1,24 +1,21 @@
 {
-  "name": "sparky",
+  "name": "Pageview Sparks",
   "version": "0.0.0",
-  "description": "ophan-sparks ============",
+  "description": "Server-generated pageview graphs for Guardian's Ophan",
   "main": "app.js",
   "dependencies": {
     "canvas": "~1.1.2",
     "lodash": "~2.4.1"
   },
   "devDependencies": {},
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
   "repository": {
     "type": "git",
-    "url": "git://github.com/stephanfowler/ophan-sparks.git"
+    "url": "git://github.com/stephanfowler/pageview-sparks.git"
   },
   "author": "http://stephanfowler.com",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/stephanfowler/ophan-sparks/issues"
+    "url": "https://github.com/stephanfowler/pageview-sparks/issues"
   },
-  "homepage": "https://github.com/stephanfowler/ophan-sparks"
+  "homepage": "https://github.com/stephanfowler/pageview-sparks"
 }
