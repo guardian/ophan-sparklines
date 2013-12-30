@@ -74,11 +74,11 @@ function collateOphanData(data) {
 
         return {
             seriesData: graphs,
+            max: _.max(_.map(graphs, function(graph) { return _.max(graph.data); })),
             totalHits: data.totalHits,
             points: graphs[0].data.length,
-            timeStart: _.first(data.seriesData[0].data).dateTime,
-            timeEnd:   _.last( data.seriesData[0].data).dateTime,
-            max: _.max(_.map(graphs, function(graph) { return _.max(graph.data); }))
+            startSec: _.first(data.seriesData[0].data).dateTime/1000,
+            endSec: _.last(data.seriesData[0].data).dateTime/1000
         };
     }
 }
@@ -90,8 +90,36 @@ function numWithCommas(x) {
 function draw(data, params) {
     var xStep = data.points < 50 ? data.points < 30 ? 3 : 2 : 1,
         yScale = Math.round(Math.max(5, Math.min(opts.graphHeight, data.max))) / (data.max || 1),
+        seconds = data.endSec - data.startSec,
         canvas = new Canvas(opts.width, opts.height),
-        c = canvas.getContext('2d');
+        c = canvas.getContext('2d'),
+        drawMark = function (second, hexColor, withFlag) {
+            var x = Math.floor(opts.width + ((second - data.startSec)/seconds - 1)*data.points*xStep);
+            
+            c.beginPath();
+            c.lineTo(x, 0);
+            c.lineTo(x, opts.graphHeight + 2);
+            c.lineWidth = 1;
+            c.strokeStyle = '#' + (hexColor || '666666');
+            c.stroke();
+
+            if (withFlag) {
+                c.fillStyle = '#' + (hexColor || '666666');
+                c.fillRect(x - 2, 0, 4, 2);
+                c.fillRect(x - 1, 2, 2, 1);
+            }
+        };
+
+    c.font = 'bold 9px Arial';
+    c.textAlign = 'right';
+    c.fillStyle = '#999999';
+    c.fillText(numWithCommas(data.totalHits), 99, 39);
+
+    c.translate(-0.5, -0.5); // reduce antialiasing
+
+    _.each(_.range(data.endSec, data.startSec, -3600), function(hour) {
+        drawMark(hour, 'f0f0f0');
+    });
 
     _.each(data.seriesData, function(s) {
         c.beginPath();
@@ -104,23 +132,12 @@ function draw(data, params) {
         c.stroke();
     });
 
-    if (params.mark) {
-        _.each(params.mark.split(','), function(mark) {
-            mark = mark.split(':');
-            c.strokeStyle = '#' + (mark[1] || '999999');
-            mark = (parseInt(mark[0], 10) - data.timeStart) / (data.timeEnd - data.timeStart);
-            mark = Math.floor(opts.width + (mark - 1)*data.points*xStep);
-            c.beginPath();
-            c.lineTo(mark, 0);
-            c.lineTo(mark, opts.graphHeight + 3);
-            c.stroke();
+    if (params.markers) {
+        _.each(params.markers.split(','), function(m) {
+            m = m.split(':');
+            drawMark(parseInt(m[0], 10), m[1], true);
         });
     }
-
-    c.font = 'bold 9px Arial';
-    c.textAlign = 'right';
-    c.fillStyle = '#999999';
-    c.fillText(numWithCommas(data.totalHits), 99, 39);
 
     return canvas;
 }
@@ -155,7 +172,7 @@ http.createServer(function (req, res) {
                             'Content-Length': buf.length,
                             'Cache-Control': 'public,max-age=30'
                         });
-                        res.end(buf);
+                        res.end(buf, 'binary');
                     });
                 } else {
                     res.end();
