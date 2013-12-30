@@ -22,7 +22,7 @@ Optional:
 * `height` : in pixels. Default is 40.
 * `pvmHot`: recent pageviews-per-min to qualify as 'hot'. Graph line will be extra bold. This is also the level at which the graph starts to compress vertically. Default is 50.
 * `pvmWarm` : recent pageviews-per-min to qualify as 'warm'. Graph line will be bold. Default is 25.
-* `pvmPeriod` : number of recent minutes over which to infer hot/warm pageviews. Default is 5.
+* `pvmPeriod` : number of recent minutes over which to calcuate pageview 'heat'. Default is 5.
 * `showStats` : show the total hits counter. Default is `true`.
 * `showHours`:  show the elapsed hour markers. Default is `true`.
 
