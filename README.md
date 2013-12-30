@@ -1,7 +1,7 @@
 Pageview Sparks
 ===============
 
-__Small server-generated images that grapg page-views for Guardian content. Uses Ophan data__. 
+__Small server-generated images, that graph page-views for Guardian content. Uses Ophan data__. 
 
 * Defaults settings, plus an orange marker   
 ![example1](./example1.png)  
@@ -20,7 +20,7 @@ __Small server-generated images that grapg page-views for Guardian content. Uses
 `?page=/2013/dec/29/foo/bar&markers=1388387000:ff9900&width=200&height=80`
 
 
-### QueryStr parameters:
+### Query string params:
 
 Required
 * __page__ : url of the Guardian content. Only the pathname part is used.
