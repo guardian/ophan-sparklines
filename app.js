@@ -21,28 +21,25 @@ var defaults = {
 
 function resample(input, newLen) {
     var inputLen = input.length,
-        span,
-        lim = function(x) {
-            return Math.min(x, inputLen - 1);
-        };
+        span;
        
     if (inputLen <= newLen) { return input; }
    
     span = inputLen / newLen;
 
-    return _.map(_.range(inputLen, 0, -span), function(right){
-        var left = right - span,
+    return _.map(_.range(0, inputLen - 1, span), function(left){
+        var right = left + span,
             lf = Math.floor(left),
             lc = Math.ceil(left),
             rf = Math.floor(right),
-            rc = Math.ceil(right);
+            rc = Math.min(Math.ceil(right), inputLen - 1);
 
         return (
-            _.reduce(_.range(lim(lc), lim(rf)), function(sum, i) { return sum + input[i]; }, 0) +
-            input[lim(lf)] * (lc - left) +
-            input[lim(rc)] * (right - rf)
+            _.reduce(_.range(lc, rf), function(sum, i) { return sum + input[i]; }, 0) +
+            input[lf] * (lc - left) +
+            input[rc] * (right - rf)
         ) / span;
-    }).reverse();
+    });
 }
 
 function collateOphanData(data, opts) {
