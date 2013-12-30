@@ -7,7 +7,7 @@ A url like this:
 ```
 http://localhost:3000/?page=/lifeandstyle/2013/dec/29/unreliable-statistics-of-2013&markers=1388387000:ff9900,1388400000:999999
 ```
-...should return a 100x40 PNG like this:
+...returns a PNG like this:
 
 ![example](./example.png)
 
