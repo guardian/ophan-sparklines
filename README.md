@@ -15,7 +15,7 @@ __Small server-generated images that grapg page-views for Guardian content. Uses
 ![example4](./example4.png)  
 `?page=/2013/dec/29/foo/bar&graphs=twitter:6666ff,facebook:000099&showHours=0&showStats=0&hotLevel=10`
 
-* Larger width & height  
+* Larger width & height, plus an orange marker  
 ![example2](./example2.png)  
 `?page=/2013/dec/29/foo/bar&markers=1388387000:ff9900&width=200&height=80`
 
