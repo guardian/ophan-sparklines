@@ -41,8 +41,16 @@ function resample(input, newLen) {
     });
 }
 
+function numWithCommas(x) {
+    return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+}
+
+function eqNoCase(a, b) {
+    return a.toLowerCase() === b.toLowerCase();
+}
+
 function collateOphanData(data, opts) {
-    var graphs = opts.graphs ? 
+    var graphs = opts.graphs ?
         _.map(opts.graphs.split(','), function(graph) {
             var p = graph.split(':');
             return { name: p[0], color: (p[1] || '666666') };
@@ -54,8 +62,8 @@ function collateOphanData(data, opts) {
         ];
 
     if(graphs.length && data.seriesData && data.seriesData.length) {
-        var graphTotal = _.find(graphs, function(g){ return eqNoCase(g.name, 'total'); }), 
-            graphOther = _.find(graphs, function(g){ return eqNoCase(g.name, 'other'); }); 
+        var graphTotal = _.find(graphs, function(g){ return eqNoCase(g.name, 'total'); }),
+            graphOther = _.find(graphs, function(g){ return eqNoCase(g.name, 'other'); });
         
         _.each(data.seriesData, function(s){
             var graphThis = _.find(graphs, function(g){ return eqNoCase(g.name, s.name); }) || graphOther;
@@ -99,14 +107,6 @@ function collateOphanData(data, opts) {
             endSec: _.last(data.seriesData[0].data).dateTime/1000
         };
     }
-}
-
-function numWithCommas(x) {
-    return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-}
-
-function eqNoCase(a, b) {
-    return a.toLowerCase() === b.toLowerCase();
 }
 
 function draw(data, opts) {
@@ -198,14 +198,17 @@ http.createServer(function (req, res) {
 
                 if (ophanData.totalHits > 0 && _.isArray(ophanData.seriesData)) {
                     ophanData = collateOphanData(ophanData, opts);
-                    ophanData ? draw(ophanData, opts).toBuffer(function(err, buf){
+                    
+                    if (!ophanData) { res.end(); return; }
+                    
+                    draw(ophanData, opts).toBuffer(function(err, buf){
                         res.writeHead(200, {
                             'Content-Type': 'image/png',
                             'Content-Length': buf.length,
                             'Cache-Control': 'public,max-age=30'
                         });
                         res.end(buf, 'binary');
-                    }) : res.end();
+                    });
                 } else {
                     res.end();
                 }
