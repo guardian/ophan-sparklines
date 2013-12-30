@@ -3,15 +3,23 @@ Pageview Sparks
 
 Small server-generated images that graph pageviews for Guardian content. Uses Ophan data. 
 
-A url like this:
-```
-http://example.com:3000/?page=/sport/2013/dec/29/foo/bar&markers=1388387000:ff9900,1388400000:999999
-```
-returns a PNG:
+Examples:
 
-![example](./example.png)
+`http://example.com:3000/?page=/sport/2013/dec/29/foo/bar&markers=1388408200:ff9900`
 
-The image is always right-alinged, with the right-hand edge representing "now". 
+![example1](./example1.png)
+
+`http://example.com:3000/?page=/sport/2013/dec/29/foo/bar&markers=1388387000:ff9900&width=200&height=80`
+
+![example2](./example2.png)
+
+`http://example.com:3000/?page=/sport/2013/dec/29/foo/bar&graphs=total:ff9900&showHours=0&showStats=0&width=50&height=20`
+
+![example3](./example3.png)
+
+`http://example.com:3000/?page=/sport/2013/dec/29/foo/bar&graphs=twitter:6666ff,facebook:000099&showHours=0&showStats=0&hotLevel=10`
+
+![example4](./example4.png)
 
 ### Query parameters:
 
@@ -19,12 +27,12 @@ Required:
 * `page` : url of the Guardian content. Only the pathname part is used.
 
 Optional:
-* `markers` : comma-seperated list of `{timestamp seconds}:{hex colour}` vertical markers.
+* `graphs` : comma-separated name of data series from the Ophan breakdown, with optional hex colors (after a colon), e.g. `twitter:6666ff,facebook:000099`. The names `total` and `other` also work. Default shows `guardian`, `google`, and `other`.
+* `markers` : comma-separated vertical markers, as unix timestamps, with optional hex colors (after a colon), e.g. `1388408200:ff9900,1388409900:cccccc`
 * `width` : in pixels. Default is 100.
 * `height` : in pixels. Default is 40.
-* `pvmHot`: recent pageviews-per-min to qualify as 'hot'. Graph line will be extra bold. This is also the level at which the graph starts to compress vertically. Default is 50.
-* `pvmWarm` : recent pageviews-per-min to qualify as 'warm'. Graph line will be bold. Default is 25.
-* `pvmPeriod` : number of recent minutes over which to calcuate pageview 'heat'. Default is 5.
+* `hotLevel`:  pageviews-per-min level that triggers an emphasised graph line. The line will go bold at half this value, and extra-bold beyond it. This is also the level at which the graph compresses vertically. Default is 50.
+* `hotPeriod` : number of recent minutes over which to calcuate the hotLevel. Default is 3.
 * `showStats` : show the total hits counter. Default is `true`.
 * `showHours`:  show the elapsed hour markers. Default is `true`.
 

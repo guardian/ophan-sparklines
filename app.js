@@ -4,9 +4,8 @@ var defaults = {
         width:       100,
         height:      40,
 
-        pvmHot:      50,
-        pvmWarm:     25,
-        pvmPeriod:   5,
+        hotLevel:      50,
+        hotPeriod:   3,
 
         showStats:   true,
         showHours:   true,
@@ -55,20 +54,16 @@ function collateOphanData(data, opts) {
         ];
 
     if(graphs.length && data.seriesData && data.seriesData.length) {
+        var graphTotal = _.find(graphs, function(g){ return eqNoCase(g.name, 'total'); }), 
+            graphOther = _.find(graphs, function(g){ return eqNoCase(g.name, 'other'); }); 
+        
         _.each(data.seriesData, function(s){
-            var graph;
-
-            // Use the 'All' graph if present
-            graph = _.find(graphs, function(g){ return eqNoCase(g.name, 'total'); }); 
-            // Or use the exact graph if present
-            graph = graph || _.find(graphs, function(g){ return eqNoCase(g.name, s.name); });
-            // Or fefault to the 'Other' graph if present
-            graph = graph || _.find(graphs, function(g){ return eqNoCase(g.name, 'other'); }); 
+            var graphThis = _.find(graphs, function(g){ return eqNoCase(g.name, s.name); }) || graphOther;
 
             // Drop the last data point
             s.data.pop();
 
-            if (graph) {
+            _.each(_.filter([graphThis, graphTotal], function(g) { return g; }), function(graph) {
                 if (graph.data) {
                     // ...sum additinal data into the graph
                     _.each(s.data, function(d, i) {
@@ -77,7 +72,7 @@ function collateOphanData(data, opts) {
                 } else {
                     graph.data = _.pluck(s.data, 'count');
                 }
-            }
+            });
         });
 
         graphs = _.filter(graphs, function(graph) { return graph.data; });
@@ -89,9 +84,9 @@ function collateOphanData(data, opts) {
 
             graph.data = resample(graph.data, opts.width);
             // recent pageviews per minute average
-            pvm = _.reduce(_.last(graph.data, opts.pvmPeriod), function(m, n){ return m + n; }, 0) / opts.pvmPeriod;
+            pvm = _.reduce(_.last(graph.data, opts.hotPeriod), function(m, n){ return m + n; }, 0) / opts.hotPeriod;
             // classify activity on scale of 1,2,3
-            graph.activity = pvm < opts.pvmHot ? pvm < opts.pvmWarm ? 1 : 2 : 3;
+            graph.activity = pvm < opts.hotLevel ? pvm < opts.hotLevel/2 ? 1 : 2 : 3;
             return graph;
         });
 
@@ -117,8 +112,8 @@ function eqNoCase(a, b) {
 function draw(data, opts) {
     var graphHeight = opts.height - (opts.showStats ? opts.statsHeight : 2),
         xStep = data.points < opts.width/2 ? data.points < opts.width/3 ? 3 : 2 : 1,
-        yStep = graphHeight/opts.pvmHot,
-        yCompress = data.max > opts.pvmHot ? opts.pvmHot/data.max : 1,
+        yStep = graphHeight/opts.hotLevel,
+        yCompress = data.max > opts.hotLevel ? opts.hotLevel/data.max : 1,
         seconds = data.endSec - data.startSec,
         canvas = new Canvas(opts.width, opts.height),
         c = canvas.getContext('2d'),
