@@ -13,7 +13,7 @@ Examples:
 
 ![example2](./example2.png)
 
-`http://example.com:3000/?page=/sport/2013/dec/29/foo/bar&graphs=total:ff9900&showHours=0&showStats=0&width=50&height=20`
+`http://example.com:3000/?page=/sport/2013/dec/29/foo/bar&graphs=total&showHours=0&showStats=0&width=50&height=20`
 
 ![example3](./example3.png)
 
