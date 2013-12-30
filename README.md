@@ -11,7 +11,7 @@ returns a PNG:
 
 The image is always right-alinged, with the right-hand edge representing "now". 
 
-## Query parameters:
+### Query parameters:
 
 Required:
 * `page` : url of the Guardian content. Only the pathname part is used.
@@ -27,6 +27,6 @@ Optional:
 * `showHours`:  show the elapsed hour markers. Default is `true`.
 
 
-## Installation
+### Installation
 
 Requires Node and Cairo. For Cairo installation, see the [Wiki](https://github.com/LearnBoost/node-canvas/wiki/_pages) from the [node-canvas](https://github.com/LearnBoost/node-canvas) project.
