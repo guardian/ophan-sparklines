@@ -15,8 +15,8 @@ Grey vertical lines represent hours elapsed. The image is always right-alinged, 
 
 Query parameters:
 
-* `page` : th eurl of the Guardian content. Can be absolute.
-* `markers` : an optional comma-seperated list of `{timestamp seconds}:{hex colour}` vertical marks.
+* `page` : url of the Guardian content. If absolute, only the pathname part is used.
+* `markers` : optional comma-seperated list of `{timestamp seconds}:{hex colour}` vertical markers.
 
 ## Installation
 
