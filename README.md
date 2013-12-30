@@ -1,7 +1,7 @@
 ophan-sparks
 ============
 
-Server-generated graphs for Guardian pageview data from Ophan.
+Server-generated graphs of Guardian pageviews, using Ophan data.
 
 A url like this:
 ```
