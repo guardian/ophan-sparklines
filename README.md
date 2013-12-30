@@ -4,19 +4,19 @@ Pageview Sparks
 __Small server-generated images, that graph page-views for Guardian content. Uses Ophan data__. 
 
 * Defaults settings, plus an orange marker   
-![example1](./example1.png)  
+![example1](./example/example1.png)  
 `?page=/2013/dec/29/foo/bar&markers=1388408200:ff9900`
 
 * Smaller, showing total only, hiding furniture  
-![example3](./example3.png)  
+![example3](./example/example3.png)  
 `?page=/2013/dec/29/foo/bar&graphs=total&showHours=0&showStats=0&width=50&height=20`
 
 * Facebook & Twitter, lowering the "hot" threshold  
-![example4](./example4.png)  
+![example4](./example/example4.png)  
 `?page=/2013/dec/29/foo/bar&graphs=twitter:6666ff,facebook:000099&showHours=0&showStats=0&hotLevel=10`
 
 * Larger width & height, plus an orange marker  
-![example2](./example2.png)  
+![example2](./example/example2.png)  
 `?page=/2013/dec/29/foo/bar&markers=1388387000:ff9900&width=200&height=80`
 
 
