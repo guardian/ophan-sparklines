@@ -43,28 +43,46 @@ function resample(input, newLen) {
 }
 
 function collateOphanData(data, opts) {
-    var graphs = [
-            {name: 'Other',    color: 'd61d00'},
-            {name: 'Google',   color: '89A54E'},
-            {name: 'Guardian', color: '4572A7'}
+    var graphs = opts.graphs ? 
+        _.map(opts.graphs.split(','), function(graph) {
+            var p = graph.split(':');
+            return { name: p[0], color: (p[1] || '666666') };
+        }) :
+        [
+            {name: 'other',    color: 'd61d00'},
+            {name: 'google',   color: '89A54E'},
+            {name: 'guardian', color: '4572A7'}
         ];
 
-    if(data.seriesData && data.seriesData.length) {
+    if(graphs.length && data.seriesData && data.seriesData.length) {
         _.each(data.seriesData, function(s){
-            // Pick the relevant graph...
-            var graph = _.find(graphs, function(g){
-                    return g.name === s.name;
-                }) || graphs[0]; // ...defaulting to the first ('Other')
+            var graph;
+
+            // Use the 'All' graph if present
+            graph = _.find(graphs, function(g){ return eqNoCase(g.name, 'total'); }); 
+            // Or use the exact graph if present
+            graph = graph || _.find(graphs, function(g){ return eqNoCase(g.name, s.name); });
+            // Or fefault to the 'Other' graph if present
+            graph = graph || _.find(graphs, function(g){ return eqNoCase(g.name, 'other'); }); 
 
             // Drop the last data point
             s.data.pop();
 
-            // ...sum the data into the graph
-            graph.data = graph.data || [];
-            _.each(s.data, function(d,i) {
-                graph.data[i] = (graph.data[i] || 0) + d.count;
-            });
+            if (graph) {
+                if (graph.data) {
+                    // ...sum additinal data into the graph
+                    _.each(s.data, function(d, i) {
+                        graph.data[i] = graph.data[i] + d.count;
+                    });
+                } else {
+                    graph.data = _.pluck(s.data, 'count');
+                }
+            }
         });
+
+        graphs = _.filter(graphs, function(graph) { return graph.data; });
+
+        if (!graphs.length) { return; }
 
         graphs = _.map(graphs, function(graph){
             var pvm;
@@ -90,6 +108,10 @@ function collateOphanData(data, opts) {
 
 function numWithCommas(x) {
     return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+}
+
+function eqNoCase(a, b) {
+    return a.toLowerCase() === b.toLowerCase();
 }
 
 function draw(data, opts) {
@@ -146,7 +168,7 @@ function draw(data, opts) {
     if (opts.markers) {
         _.each(opts.markers.split(','), function(m) {
             m = m.split(':');
-            drawMark(parseInt(m[0], 10), m[1], true);
+            drawMark(_.parseInt(m[0]), m[1], true);
         });
     }
 
@@ -155,7 +177,7 @@ function draw(data, opts) {
 
 http.createServer(function (req, res) {
     var defaulter = _.partialRight(_.assign, function(a, b) {
-            return a ? parseInt(a, 10) : b;
+            return a ? _.parseInt(a) : b;
         }),
         opts = defaulter(url.parse(req.url, true).query, defaults);
 
@@ -180,14 +202,15 @@ http.createServer(function (req, res) {
                 try { ophanData = JSON.parse(str); } catch(e) { ophanData = {}; }
 
                 if (ophanData.totalHits > 0 && _.isArray(ophanData.seriesData)) {
-                    draw(collateOphanData(ophanData, opts), opts).toBuffer(function(err, buf){
+                    ophanData = collateOphanData(ophanData, opts);
+                    ophanData ? draw(ophanData, opts).toBuffer(function(err, buf){
                         res.writeHead(200, {
                             'Content-Type': 'image/png',
                             'Content-Length': buf.length,
                             'Cache-Control': 'public,max-age=30'
                         });
                         res.end(buf, 'binary');
-                    });
+                    }) : res.end();
                 } else {
                     res.end();
                 }
