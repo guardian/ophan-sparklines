@@ -3,11 +3,12 @@
 var opts = {
         width:                 100,
         height:                40,
-        graphHeight:           29,
-        pvmHot:                50,    // pageviews-per-min to qualify as 'hot'
+        statsHeight:           11,
+
+        pvmHot:                50,    // pageviews-per-min to qualify as 'hot' - and the level at which the graph starts to compress vertically.
         pvmWarm:               25,    // pageviews-per-min to qualify as 'warm'
-        pvmPeriod:             5      // num of recent datapoints over which to calc pageviews
-    },
+        pvmPeriod:             5,     // num of recent datapoints over which to calc recent pageviews
+   },
 
     Canvas = require('canvas'),
     http = require('http'),
@@ -88,8 +89,10 @@ function numWithCommas(x) {
 }
 
 function draw(data, params) {
-    var xStep = data.points < 50 ? data.points < 30 ? 3 : 2 : 1,
-        yScale = Math.round(Math.max(5, Math.min(opts.graphHeight, data.max))) / (data.max || 1),
+    var graphHeight = opts.height - opts.statsHeight,
+        xStep = data.points < opts.width/2 ? data.points < opts.width/3 ? 3 : 2 : 1,
+        yStep = graphHeight/opts.pvmHot,
+        yCompress = data.max > opts.pvmHot ? opts.pvmHot/data.max : 1,
         seconds = data.endSec - data.startSec,
         canvas = new Canvas(opts.width, opts.height),
         c = canvas.getContext('2d'),
@@ -98,7 +101,7 @@ function draw(data, params) {
             
             c.beginPath();
             c.lineTo(x, 0);
-            c.lineTo(x, opts.graphHeight + 2);
+            c.lineTo(x, graphHeight + 2);
             c.lineWidth = 1;
             c.strokeStyle = '#' + (hexColor || '666666');
             c.stroke();
@@ -113,7 +116,7 @@ function draw(data, params) {
     c.font = 'bold 9px Arial';
     c.textAlign = 'right';
     c.fillStyle = '#999999';
-    c.fillText(numWithCommas(data.totalHits), 99, 39);
+    c.fillText(numWithCommas(data.totalHits), opts.width - 1, opts.height - 1);
 
     c.translate(-0.5, -0.5); // reduce antialiasing
 
@@ -125,7 +128,7 @@ function draw(data, params) {
         c.beginPath();
         _.each(s.data, function(y, x){
             if (!x && data.points === opts.width) { return; }
-            c.lineTo(opts.width + (x - data.points + 1)*xStep - 1, opts.graphHeight - yScale*y + 2); // + 2 so thick lines don't get cropped at top
+            c.lineTo(opts.width + (x - data.points + 1)*xStep - 1, graphHeight - yStep*yCompress*y + 2); // + 2 so thick lines don't get cropped at top
         });
         c.lineWidth = s.activity;
         c.strokeStyle = '#' + s.color;
