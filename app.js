@@ -1,14 +1,18 @@
 "use strict";
 
-var opts = {
-        width:                 100,
-        height:                40,
-        statsHeight:           11,
+var defaults = {
+        width:       100,
+        height:      40,
 
-        pvmHot:                50,    // pageviews-per-min to qualify as 'hot' - and the level at which the graph starts to compress vertically.
-        pvmWarm:               25,    // pageviews-per-min to qualify as 'warm'
-        pvmPeriod:             5,     // num of recent datapoints over which to calc recent pageviews
-   },
+        pvmHot:      50,
+        pvmWarm:     25,
+        pvmPeriod:   5,
+
+        showStats:   true,
+        showHours:   true,
+        
+        statsHeight: 11
+    },
 
     Canvas = require('canvas'),
     http = require('http'),
@@ -17,28 +21,31 @@ var opts = {
 
 function resample(input, newLen) {
     var inputLen = input.length,
-        span;
+        span,
+        lim = function(x) {
+            return Math.min(x, inputLen - 1);
+        };
        
     if (inputLen <= newLen) { return input; }
    
     span = inputLen / newLen;
 
-    return _.map(_.range(0, inputLen, span), function(left){
-        var right = left + span,
+    return _.map(_.range(inputLen, 0, -span), function(right){
+        var left = right - span,
             lf = Math.floor(left),
             lc = Math.ceil(left),
             rf = Math.floor(right),
-            rc = Math.min(Math.ceil(right), inputLen - 1);
+            rc = Math.ceil(right);
 
         return (
-            _.reduce(_.range(lc, rf), function(sum, i) { return sum + input[i]; }, 0) +
-            input[lf] * (lc - left) +
-            input[rc] * (right - rf)
+            _.reduce(_.range(lim(lc), lim(rf)), function(sum, i) { return sum + input[i]; }, 0) +
+            input[lim(lf)] * (lc - left) +
+            input[lim(rc)] * (right - rf)
         ) / span;
-    });
+    }).reverse();
 }
 
-function collateOphanData(data) {
+function collateOphanData(data, opts) {
     var graphs = [
             {name: 'Other',    color: 'd61d00'},
             {name: 'Google',   color: '89A54E'},
@@ -88,8 +95,8 @@ function numWithCommas(x) {
     return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 }
 
-function draw(data, params) {
-    var graphHeight = opts.height - opts.statsHeight,
+function draw(data, opts) {
+    var graphHeight = opts.height - (opts.showStats ? opts.statsHeight : 2),
         xStep = data.points < opts.width/2 ? data.points < opts.width/3 ? 3 : 2 : 1,
         yStep = graphHeight/opts.pvmHot,
         yCompress = data.max > opts.pvmHot ? opts.pvmHot/data.max : 1,
@@ -113,16 +120,20 @@ function draw(data, params) {
             }
         };
 
-    c.font = 'bold 9px Arial';
-    c.textAlign = 'right';
-    c.fillStyle = '#999999';
-    c.fillText(numWithCommas(data.totalHits), opts.width - 1, opts.height - 1);
+    if (opts.showStats) {
+        c.font = 'bold 9px Arial';
+        c.textAlign = 'right';
+        c.fillStyle = '#999999';
+        c.fillText(numWithCommas(data.totalHits), opts.width - 1, opts.height - 1);
+    }
 
     c.translate(-0.5, -0.5); // reduce antialiasing
 
-    _.each(_.range(data.endSec, data.startSec, -3600), function(hour) {
-        drawMark(hour, 'f0f0f0');
-    });
+    if (opts.showHours) {
+        _.each(_.range(data.endSec, data.startSec, -3600), function(hour) {
+            drawMark(hour, 'f0f0f0');
+        });
+    }
 
     _.each(data.seriesData, function(s) {
         c.beginPath();
@@ -135,8 +146,8 @@ function draw(data, params) {
         c.stroke();
     });
 
-    if (params.markers) {
-        _.each(params.markers.split(','), function(m) {
+    if (opts.markers) {
+        _.each(opts.markers.split(','), function(m) {
             m = m.split(':');
             drawMark(parseInt(m[0], 10), m[1], true);
         });
@@ -146,9 +157,12 @@ function draw(data, params) {
 }
 
 http.createServer(function (req, res) {
-    var params = url.parse(req.url, true).query;
-    
-    if (!params.page) {
+    var defaulter = _.partialRight(_.assign, function(a, b) {
+            return a ? parseInt(a, 10) : b;
+        }),
+        opts = defaulter(url.parse(req.url, true).query, defaults);
+
+    if (!opts.page) {
         res.end();
         return;
     }
@@ -156,7 +170,7 @@ http.createServer(function (req, res) {
     http.request(
         {
           host: 'api.ophan.co.uk',
-          path: '/api/breakdown?path=' + url.parse(params.page).pathname
+          path: '/api/breakdown?path=' + url.parse(opts.page).pathname
         },
         function(proxied) {
             var str = '';
@@ -169,7 +183,7 @@ http.createServer(function (req, res) {
                 try { ophanData = JSON.parse(str); } catch(e) { ophanData = {}; }
 
                 if (ophanData.totalHits > 0 && _.isArray(ophanData.seriesData)) {
-                    draw(collateOphanData(ophanData), params).toBuffer(function(err, buf){
+                    draw(collateOphanData(ophanData, opts), opts).toBuffer(function(err, buf){
                         res.writeHead(200, {
                             'Content-Type': 'image/png',
                             'Content-Length': buf.length,
