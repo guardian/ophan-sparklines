@@ -37,11 +37,11 @@ function resample(input, newLen) {
     });
 }
 
-function prepareSeries(data) {
+function collateOphanData(data) {
     var graphs = [
-            {name: 'Other',    data: [], color: 'd61d00', max: 0}, // required
-            {name: 'Google',   data: [], color: '89A54E', max: 0},
-            {name: 'Guardian', data: [], color: '4572A7', max: 0}
+            {name: 'Other',    color: 'd61d00'},
+            {name: 'Google',   color: '89A54E'},
+            {name: 'Guardian', color: '4572A7'}
         ];
 
     if(data.seriesData && data.seriesData.length) {
@@ -57,20 +57,31 @@ function prepareSeries(data) {
             s.data.pop();
 
             // ...sum the data into the graph
+            graph.data = graph.data || [];
             _.each(s.data, function(d,i) {
                 graph.data[i] = (graph.data[i] || 0) + d.count;
             });
         });
 
-        return _.map(graphs, function(graph){
+        graphs = _.map(graphs, function(graph){
+            var pvm;
+
             graph.data = resample(graph.data, opts.width);
-            graph.max = _.max(graph.data);
             // recent pageviews per minute average
-            var pvm = _.reduce(_.last(graph.data, opts.pvmPeriod), function(m, n){ return m + n; }, 0) / opts.pvmPeriod;
+            pvm = _.reduce(_.last(graph.data, opts.pvmPeriod), function(m, n){ return m + n; }, 0) / opts.pvmPeriod;
             // classify activity on scale of 1,2,3
             graph.activity = pvm < opts.pvmHot ? pvm < opts.pvmWarm ? 1 : 2 : 3;
             return graph;
         });
+
+        return {
+            seriesData: graphs,
+            totalHits: data.totalHits,
+            points: graphs[0].data.length,
+            timeStart: _.first(data.seriesData[0].data).dateTime,
+            timeEnd:   _.last( data.seriesData[0].data).dateTime,
+            max: _.max(_.map(graphs, function(graph) { return _.max(graph.data); }))
+        };
     }
 }
 
@@ -78,19 +89,17 @@ function numWithCommas(x) {
     return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 }
 
-function draw(series, totalHits, response) {
-    var globalMax = _.max(_.pluck(series, 'max')),
-        length = ((series[0] || {}).data || []).length || 0,
-        xStep = length < 50 ? length < 30 ? 3 : 2 : 1,
-        yScale = Math.round(Math.max(5, Math.min(opts.graphHeight, globalMax))) / globalMax,
+function draw(data) {
+    var xStep = data.points < 50 ? data.points < 30 ? 3 : 2 : 1,
+        yScale = Math.round(Math.max(5, Math.min(opts.graphHeight, data.max))) / (data.max || 1),
         canvas = new Canvas(opts.width, opts.height),
         c = canvas.getContext('2d');
 
-    _.each(series, function(s) {
+    _.each(data.seriesData, function(s) {
         c.beginPath();
         _.each(s.data, function(y, x){
-            if (!x && length === opts.width) { return; }
-            c.lineTo(opts.width + (x - length + 1)*xStep - 1, opts.graphHeight - yScale*y + 2); // + 2 so thick lines don't get cropped at top
+            if (!x && data.points === opts.width) { return; }
+            c.lineTo(opts.width + (x - data.points + 1)*xStep - 1, opts.graphHeight - yScale*y + 2); // + 2 so thick lines don't get cropped at top
         });
         c.lineWidth = s.activity;
         c.strokeStyle = '#' + s.color;
@@ -100,16 +109,9 @@ function draw(series, totalHits, response) {
     c.font = 'bold 9px Arial';
     c.textAlign = 'right';
     c.fillStyle = '#999999';
-    c.fillText(numWithCommas(totalHits), 99, 39);
+    c.fillText(numWithCommas(data.totalHits), 99, 39);
 
-    canvas.toBuffer(function(err, buf){
-        response.writeHead(200, {
-            'Content-Type': 'image/png',
-            'Content-Length': buf.length,
-            'Cache-Control': 'public,max-age=30'
-        });
-        response.end(buf);
-    });
+    return canvas;
 }
 
 http.createServer(function (req, res) {
@@ -131,12 +133,19 @@ http.createServer(function (req, res) {
             proxied.on('data', function (chunk) { str += chunk; });
 
             proxied.on('end', function () {
-                var rawData;
+                var ophanData;
 
-                try { rawData = JSON.parse(str); } catch(e) { rawData = {}; }
+                try { ophanData = JSON.parse(str); } catch(e) { ophanData = {}; }
 
-                if (rawData.totalHits > 0 && _.isArray(rawData.seriesData)) {
-                    draw(prepareSeries(rawData), rawData.totalHits, res);
+                if (ophanData.totalHits > 0 && _.isArray(ophanData.seriesData)) {
+                    draw(collateOphanData(ophanData)).toBuffer(function(err, buf){
+                        res.writeHead(200, {
+                            'Content-Type': 'image/png',
+                            'Content-Length': buf.length,
+                            'Cache-Control': 'public,max-age=30'
+                        });
+                        res.end(buf);
+                    });
                 } else {
                     res.end();
                 }
