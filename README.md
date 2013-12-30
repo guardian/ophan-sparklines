@@ -1,13 +1,11 @@
 ophan-sparks
 ============
 
-Server-generated graphs of Guardian pageviews, using Ophan data.
-
-A url like this:
+Server-generated graphs of Guardian pageviews, using Ophan data. A url like this:
 ```
-http://localhost:3000/?page=/lifeandstyle/2013/dec/29/unreliable-statistics-of-2013&markers=1388387000:ff9900,1388400000:999999
+http://example.com:3000/?page=/sport/2013/dec/29/foo/bar&markers=1388387000:ff9900,1388400000:999999
 ```
-...returns a PNG like this:
+returns a PNG:
 
 ![example](./example.png)
 
