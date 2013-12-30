@@ -1,7 +1,9 @@
 Pageview Sparks
 ===============
 
-Server-generated graphs of Guardian pageviews, using Ophan data. A url like this:
+Small server-generated images that graph pageviews for Guardian content. Uses Ophan data. 
+
+A url like this:
 ```
 http://example.com:3000/?page=/sport/2013/dec/29/foo/bar&markers=1388387000:ff9900,1388400000:999999
 ```
