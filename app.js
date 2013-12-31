@@ -1,15 +1,15 @@
 "use strict";
 
 var defaults = {
+        page:        '',
+        graphs:      'other:d61d00,google:89A54E,guardian:4572A7',
+        markers:     '',
         width:       100,
         height:      40,
-
-        hotLevel:      50,
-        hotPeriod:   3,
-
-        showStats:   true,
-        showHours:   true,
-        
+        hotLevel:    50,
+        hotPeriod:   5,
+        showStats:   1, // == true
+        showHours:   1, // == true
         statsHeight: 11
     },
 
@@ -50,16 +50,10 @@ function eqNoCase(a, b) {
 }
 
 function collateOphanData(data, opts) {
-    var graphs = opts.graphs ?
-        _.map(opts.graphs.split(','), function(graph) {
+    var graphs = _.map(opts.graphs.split(','), function(graph) {
             var p = graph.split(':');
             return { name: p[0], color: (p[1] || '666666') };
-        }) :
-        [
-            {name: 'other',    color: 'd61d00'},
-            {name: 'google',   color: '89A54E'},
-            {name: 'guardian', color: '4572A7'}
-        ];
+        });
 
     if(graphs.length && data.seriesData && data.seriesData.length) {
         var graphTotal = _.find(graphs, function(g){ return eqNoCase(g.name, 'total'); }),
@@ -88,13 +82,9 @@ function collateOphanData(data, opts) {
         if (!graphs.length) { return; }
 
         graphs = _.map(graphs, function(graph){
-            var pvm;
-
+            var hotness = _.reduce(_.last(graph.data, opts.hotPeriod), function(m, n){ return m + n; }, 0) / opts.hotPeriod;
+            graph.hotness = hotness < opts.hotLevel ? hotness < opts.hotLevel/2 ? 1 : 2 : 3;
             graph.data = resample(graph.data, opts.width);
-            // recent pageviews per minute average
-            pvm = _.reduce(_.last(graph.data, opts.hotPeriod), function(m, n){ return m + n; }, 0) / opts.hotPeriod;
-            // classify activity on scale of 1,2,3
-            graph.activity = pvm < opts.hotLevel ? pvm < opts.hotLevel/2 ? 1 : 2 : 3;
             return graph;
         });
 
@@ -155,7 +145,7 @@ function draw(data, opts) {
             if (!x && data.points === opts.width) { return; }
             c.lineTo(opts.width + (x - data.points + 1)*xStep - 1, graphHeight - yStep*yCompress*y + 2); // + 2 so thick lines don't get cropped at top
         });
-        c.lineWidth = s.activity;
+        c.lineWidth = s.hotness;
         c.strokeStyle = '#' + s.color;
         c.stroke();
     });
@@ -171,10 +161,11 @@ function draw(data, opts) {
 }
 
 http.createServer(function (req, res) {
-    var defaulter = _.partialRight(_.assign, function(a, b) {
-            return a ? _.parseInt(a) : b;
-        }),
-        opts = defaulter(url.parse(req.url, true).query, defaults);
+    var opts = _.chain(url.parse(req.url, true).query)
+        .omit(function(v, key) { return !_.has(defaults, key); })
+        .assign(defaults, function(a, b) { return a ? a : b; })
+        .mapValues(function(str) { return /^\d+$/.test(str) ? _.parseInt(str) : str; })
+        .value();
 
     if (!opts.page) {
         res.end();
