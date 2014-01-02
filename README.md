@@ -7,21 +7,21 @@ __Small server-generated images, that graph page-views for Guardian content. Use
 ![](./example/example00.png)  
 `?page=/uk/sport`
 
-* Seperate graphs specified, orange marker point, doubled dimensions
+* Seperate graphs specified, orange marker point, doubled dimensions  
 ![](./example/example01.png)  
-`?page=/uk/sport&graphs=other:d61d00,google:89A54E,guardian:4572A7&width=100&height=40&markers=1388680400:ff9900`
+`...&graphs=other:d61d00,google:89A54E,guardian:4572A7&width=100&height=40&markers=1388680400:ff9900`
 
 * As above, with total pageviews and elapsed hour bars  
 ![](./example/example02.png)  
-`?page=/uk/sport&graphs=other:d61d00,google:89A54E,guardian:4572A7&width=100&height=40&markers=1388680400:ff9900&showStats=1&showHours=1`
+`...&showStats=1&showHours=1`
 
 * As above, even larger  
 ![](./example/example03.png)  
-`?page=/uk/sport&graphs=other:d61d00,google:89A54E,guardian:4572A7&width=200&height=80&markers=1388680400:ff9900&showStats=1&showHours=1`
+`...&width=200&height=80`
 
 * Graphing Facebook & Twitter, lowering the "hot" threshold  
 ![](./example/example04.png)  
-`?page=/2013/dec/29/foo/bar&graphs=twitter:6666ff,facebook:000099&hotLevel=10&width=100&height=40
+`...&graphs=twitter:6666ff,facebook:000099&hotLevel=10`
 
 
 ### Query string params:
@@ -36,9 +36,9 @@ Optional
 
 * __markers__ : comma-separated vertical markers, as unix timestamps, with optional hex colours (after a colon), e.g. `1388408200:ff9900,1388409900:cccccc`
 
-* __width__ : in pixels. Default is 100.
+* __width__ : in pixels. Default is 50.
 
-* __height__ : in pixels. Default is 40.
+* __height__ : in pixels. Default is 20.
 
 * __hotLevel__:  pageviews-per-min level that triggers an emphasised graph line. The line will go bold at half this value, and extra-bold beyond it. This is also the level at which the graph compresses vertically. Default is 50, which seems appropriate for articles; fronts need a higher figure, e.g. 250.
 
