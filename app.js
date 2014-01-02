@@ -1,16 +1,15 @@
 "use strict";
 
-var defaults = {
-        page:        '',
-        graphs:      'other:d61d00,google:89A54E,guardian:4572A7',
-        markers:     '',
-        width:       100,
-        height:      40,
+var defaults = {              // Examples:
+        page:        '',      // '/uk-news/2014/jan/02/uk-braced-further-floods-storms-atlantic'
+        graphs:      'total', // 'other:d61d00,google:89A54E,guardian:4572A7',
+        markers:     '',      // 'markers=1388680400:ff9900,1388681200:ff0000'
+        width:       50,
+        height:      20,
         hotLevel:    50,
-        hotPeriod:   5,
-        showStats:   1, // == true
-        showHours:   1, // == true
-        statsHeight: 11
+        hotPeriod:   3,
+        showStats:   0,       // 1, to enable
+        showHours:   0        // 1, to enable
     },
 
     Canvas = require('canvas'),
@@ -100,7 +99,7 @@ function collateOphanData(data, opts) {
 }
 
 function draw(data, opts) {
-    var graphHeight = opts.height - (opts.showStats ? opts.statsHeight : 2),
+    var graphHeight = opts.height - (opts.showStats ? 11 : 2),
         xStep = data.points < opts.width/2 ? data.points < opts.width/3 ? 3 : 2 : 1,
         yStep = graphHeight/opts.hotLevel,
         yCompress = data.max > opts.hotLevel ? opts.hotLevel/data.max : 1,
@@ -163,8 +162,7 @@ function draw(data, opts) {
 http.createServer(function (req, res) {
     var opts = _.chain(url.parse(req.url, true).query)
         .omit(function(v, key) { return !_.has(defaults, key); })
-        .assign(defaults, function(a, b) { return a ? a : b; })
-        .mapValues(function(str) { return /^\d+$/.test(str) ? _.parseInt(str) : str; })
+        .assign(defaults, function(a, b) { return a ? _.isNumber(b) ? _.parseInt(a) : a : b })
         .value();
 
     if (!opts.page) {

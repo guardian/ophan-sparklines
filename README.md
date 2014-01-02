@@ -3,21 +3,25 @@ Pageview Sparks
 
 __Small server-generated images, that graph page-views for Guardian content. Uses Ophan data__. 
 
-* Defaults settings, plus an orange marker   
-![example1](./example/example1.png)  
-`?page=/2013/dec/29/foo/bar&markers=1388408200:ff9900`
+* Defaults settings  
+![](./example/example00.png)  
+`?page=/uk/sport`
 
-* Smaller, showing total only, hiding furniture  
-![example3](./example/example3.png)  
-`?page=/2013/dec/29/foo/bar&graphs=total&showHours=0&showStats=0&width=50&height=20`
+* Seperate graphs specified, orange marker point, doubled dimensions
+![](./example/example01.png)  
+`?page=/uk/sport&graphs=other:d61d00,google:89A54E,guardian:4572A7&width=100&height=40&markers=1388680400:ff9900`
 
-* Facebook & Twitter, lowering the "hot" threshold  
-![example4](./example/example4.png)  
-`?page=/2013/dec/29/foo/bar&graphs=twitter:6666ff,facebook:000099&showHours=0&showStats=0&hotLevel=10`
+* As above, with total pageviews and elapsed hour bars  
+![](./example/example02.png)  
+`?page=/uk/sport&graphs=other:d61d00,google:89A54E,guardian:4572A7&width=100&height=40&markers=1388680400:ff9900&showStats=1&showHours=1`
 
-* Larger width & height, plus an orange marker  
-![example2](./example/example2.png)  
-`?page=/2013/dec/29/foo/bar&markers=1388387000:ff9900&width=200&height=80`
+* As above, even larger  
+![](./example/example03.png)  
+`?page=/uk/sport&graphs=other:d61d00,google:89A54E,guardian:4572A7&width=200&height=80&markers=1388680400:ff9900&showStats=1&showHours=1`
+
+* Graphing Facebook & Twitter, lowering the "hot" threshold  
+![](./example/example04.png)  
+`?page=/2013/dec/29/foo/bar&graphs=twitter:6666ff,facebook:000099&hotLevel=10&width=100&height=40
 
 
 ### Query string params:
@@ -28,7 +32,7 @@ Required
 
 Optional
 
-* __graphs__ : comma-separated names of series from the Ophan breakdown, with optional hex colours (after a colon), e.g. `twitter:6666ff,facebook:000099`. The names `total` and `other` also work. Default shows `guardian`, `google`, and `other`.
+* __graphs__ : comma-separated names of dataseries from the Ophan breakdown, with optional hex colours (after a colon), e.g. `twitter:6666ff,facebook:000099`. The following are in Ophan at time of writing: `guardian`, `unknown - to content`, `unknown - to front`, `google`, `twitter`, `facebook`, `reddit`, `drudge report`, `outbrain`, `other`. Also supported is `total`, which is the default.
 
 * __markers__ : comma-separated vertical markers, as unix timestamps, with optional hex colours (after a colon), e.g. `1388408200:ff9900,1388409900:cccccc`
 
@@ -36,13 +40,13 @@ Optional
 
 * __height__ : in pixels. Default is 40.
 
-* __hotLevel__:  pageviews-per-min level that triggers an emphasised graph line. The line will go bold at half this value, and extra-bold beyond it. This is also the level at which the graph compresses vertically. Default is 50.
+* __hotLevel__:  pageviews-per-min level that triggers an emphasised graph line. The line will go bold at half this value, and extra-bold beyond it. This is also the level at which the graph compresses vertically. Default is 50, which seems appropriate for articles; fronts need a higher figure, e.g. 250.
 
 * __hotPeriod__ : number of recent minutes over which to calcuate the hotLevel. Default is 3.
 
-* __showStats__ : show the total hits counter. Default is `true`.
+* __showStats__ : show the total hits counter, when set to `1`. Default is `0`.
 
-* __showHours__ :  show the elapsed hour markers. Default is `true`.
+* __showHours__ :  show the elapsed hour markers, when set to `1`. Default is `0`.
 
 
 ### Installation
