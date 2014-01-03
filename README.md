@@ -1,7 +1,7 @@
 Pageview Sparks
 ===============
 
-__Small server-generated images, that graph page-views for Guardian content. Uses Ophan data__. 
+__Small server-generated graphs of Guardian content page-views. Uses Ophan data__. 
 
 * Default rendering:  
 ![](./example/example01.png)  
