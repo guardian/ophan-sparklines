@@ -3,17 +3,17 @@ Pageview Sparks
 
 __Small server-generated images, that graph page-views for Guardian content. Uses Ophan data__. 
 
-* Defaults settings  
+* Default rendering:  
 ![](./example/example01.png)  
-`?page=/lifeandstyle/2014/jan/03/12-new-years-resolutions-should-be-abandoned`
+`?page=/lifeandstyle/2014/jan/03/12-new-years-resolutions-should-be-abandoned`  
 
-* Seperate graphs specified, doubled dimensions  
+* Seperate graphs specified, dimensions doubled:  
 ![](./example/example02.png)  
-`...&graphs=guardian:4572A7,facebook:00b6f3&width=100&height=40`
+`...&graphs=guardian:4572A7,facebook:00b6f3&width=100&height=40`  
 
-* As above, with total pageviews, elapsed hour bars, marker point  
+* With a marker point, total pageviews, and elapsed hour vertical bars:  
 ![](./example/example03.png)  
-`...&markers=1388747300:ff9900&showHours=1&showStats=1`
+`...&markers=1388747300:ff9900&showStats=1&showHours=1`  
 
 ### Query string params:
 
