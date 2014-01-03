@@ -14,6 +14,8 @@ var defaults = {              // Examples:
         showHours:   0        // 1, to enable
     },
 
+    config = require('./config.json'),
+
     Canvas = require('canvas'),
     http = require('http'),
     url = require('url'),
@@ -182,6 +184,17 @@ function draw(data, opts) {
     return canvas;
 }
 
+
+if(!config.ophanHost) {
+    console.log('Please set the "ophanHost" property in config.json');
+    process.exit(1);
+}
+
+if(!config.ophanKey) {
+    console.log('Please set the "ophanKey" property in config.json');
+    process.exit(1);
+}
+
 http.createServer(function (req, res) {
     var opts = _.chain(url.parse(req.url, true).query)
         .omit(function(v, key) { return !_.has(defaults, key); })
@@ -195,8 +208,8 @@ http.createServer(function (req, res) {
 
     http.request(
         {
-          host: 'api.ophan.co.uk',
-          path: '/api/breakdown?path=' + url.parse(opts.page).pathname
+          host: config.ophanHost,
+          path: '/api/breakdown?path=' + url.parse(opts.page).pathname + '&key=' + config.ophanKey
         },
         function(proxied) {
             var str = '';
