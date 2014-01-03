@@ -44,19 +44,19 @@ function resample(arr, newLen) {
     });
 }
 
-function smooth(arr, r) {
-    if (r < 2) { return arr; }
-    return _.map(arr, function(x, i, arr) {
-        return average(arr.slice(i, i+r));  
-    });
-}
-
 function average(arr) {
     var len = arr.length;
 
     if (!len) { return 0; }
     if (len === 1) { return arr[0]; }
-    return _.reduce(arr, function(acc, x) { return acc + x; }) / len;  
+    return _.reduce(arr, function(acc, x) { return acc + x; }) / len;
+}
+
+function smooth(arr, r) {
+    if (r < 2) { return arr; }
+    return _.map(arr, function(x, i, arr) {
+        return average(arr.slice(i, i+r));
+    });
 }
 
 function numWithCommas(x) {
@@ -184,7 +184,6 @@ function draw(data, opts) {
     return canvas;
 }
 
-
 if(!config.ophanHost) {
     console.log('Please set the "ophanHost" property in config.json');
     process.exit(1);
@@ -200,7 +199,7 @@ http.createServer(function (req, res) {
 
         opts = _.chain(url.parse(req.url, true).query)
         .omit(function(v, key) { return !_.has(defaults, key); })
-        .assign(defaults, function(a, b) { return a ? _.isNumber(b) ? a % 1 === 0 ? parseInt(a, 10) : parseFloat(a) : a : b })
+        .assign(defaults, function(a, b) { return a ? _.isNumber(b) ? a % 1 === 0 ? parseInt(a, 10) : parseFloat(a) : a : b; })
         .value();
 
     if (!opts.page) { res.end(); return; }
@@ -240,10 +239,11 @@ http.createServer(function (req, res) {
         }
     );
 
-    ophanReq.on('error', function(err) {
-        // silent;
+    ophanReq.on('error', function(e) {
+        console.log(e.message);
     });
 
     ophanReq.end();
 
 }).listen(3000);
+
