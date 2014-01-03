@@ -196,17 +196,16 @@ if(!config.ophanKey) {
 }
 
 http.createServer(function (req, res) {
-    var opts = _.chain(url.parse(req.url, true).query)
+    var ophanReq,
+
+        opts = _.chain(url.parse(req.url, true).query)
         .omit(function(v, key) { return !_.has(defaults, key); })
         .assign(defaults, function(a, b) { return a ? _.isNumber(b) ? a % 1 === 0 ? parseInt(a, 10) : parseFloat(a) : a : b })
         .value();
 
-    if (!opts.page) {
-        res.end();
-        return;
-    }
+    if (!opts.page) { res.end(); return; }
 
-    http.request(
+    ophanReq = http.request(
         {
           host: config.ophanHost,
           path: '/api/breakdown?path=' + url.parse(opts.page).pathname + '&key=' + config.ophanKey
@@ -239,6 +238,12 @@ http.createServer(function (req, res) {
                 }
             });
         }
-    ).end();
+    );
+
+    ophanReq.on('error', function(err) {
+        // silent;
+    });
+
+    ophanReq.end();
 
 }).listen(3000);
