@@ -48,6 +48,7 @@ Optional
 
 * __showHours__ :  show the elapsed hour markers, when set to `1`. Default is `0`.
 
+* __smoothing__ : number of pixels over which to compute a moving average. Default is `3`.
 
 ### Installation
 

@@ -8,6 +8,7 @@ var defaults = {              // Examples:
         height:      20,
         hotLevel:    50,
         hotPeriod:   3,
+        smoothing:   3,
         showStats:   0,       // 1, to enable
         showHours:   0        // 1, to enable
     },
@@ -38,6 +39,21 @@ function resample(input, newLen) {
             input[rc] * (right - rf)
         ) / span;
     });
+}
+
+function smooth(arr, r) {
+    if (r < 2) { return input; }
+    return _.map(arr, function(x, i, arr) {
+        return average(arr.slice(i, i+r));  
+    });
+}
+
+function average(arr) {
+    var len = arr.length;
+
+    if (!len) { return 0; }
+    if (len === 1) { return arr[0]; }
+    return _.reduce(arr, function(acc, x) { return acc + x; }) / len;  
 }
 
 function numWithCommas(x) {
@@ -83,7 +99,7 @@ function collateOphanData(data, opts) {
         graphs = _.map(graphs, function(graph){
             var hotness = _.reduce(_.last(graph.data, opts.hotPeriod), function(m, n){ return m + n; }, 0) / opts.hotPeriod;
             graph.hotness = hotness < opts.hotLevel ? hotness < opts.hotLevel/2 ? 1 : 2 : 3;
-            graph.data = resample(graph.data, opts.width);
+            graph.data = smooth(resample(graph.data, opts.width), opts.smoothing);
             return graph;
         });
 
