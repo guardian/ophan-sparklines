@@ -56,8 +56,16 @@ Optional
 
 ### Installation
 
-Requires Node and [Cairo](http://cairographics.org/). For Cairo installation, see the dependencies part of [Wiki](https://github.com/LearnBoost/node-canvas/wiki/_pages) from the [node-canvas](https://github.com/LearnBoost/node-canvas) project. Then:
+Requires Node and [Cairo](http://cairographics.org/).
+
+For Cairo installation, see the dependencies part of [Wiki](https://github.com/LearnBoost/node-canvas/wiki/_pages) from the [node-canvas](https://github.com/LearnBoost/node-canvas) project.
+
+Then:
 
 ```
 $ npm install
 ```
+
+Create a file called `config.json` with `ophanHost` and `ophanKey` properties (see `sample-config.json`).
+
+Then in a browser: `http://localhost:3000/?page=/uk`
