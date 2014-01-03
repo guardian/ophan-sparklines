@@ -4,25 +4,16 @@ Pageview Sparks
 __Small server-generated images, that graph page-views for Guardian content. Uses Ophan data__. 
 
 * Defaults settings  
-![](./example/example00.png)  
-`?page=/uk/sport`
-
-* Seperate graphs specified, orange marker point, doubled dimensions  
 ![](./example/example01.png)  
-`...&graphs=other:d61d00,google:89A54E,guardian:4572A7&width=100&height=40&markers=1388680400:ff9900`
+`?page=/lifeandstyle/2014/jan/03/12-new-years-resolutions-should-be-abandoned`
 
-* As above, with total pageviews and elapsed hour bars  
+* Seperate graphs specified, doubled dimensions  
 ![](./example/example02.png)  
-`...&showStats=1&showHours=1`
+`...&graphs=guardian:4572A7,facebook:00b6f3&width=100&height=40`
 
-* As above, even larger  
+* As above, with total pageviews, elapsed hour bars, marker point  
 ![](./example/example03.png)  
-`...&width=200&height=80`
-
-* Graphing Facebook & Twitter, lowering the "hot" threshold  
-![](./example/example04.png)  
-`...&graphs=twitter:6666ff,facebook:000099&hotLevel=10`
-
+`...&markers=1388747300:ff9900&showHours=1&showStats=1`
 
 ### Query string params:
 
@@ -40,13 +31,15 @@ Optional
 
 * __height__ : in pixels. Default is 20.
 
+* __showStats__ : show the total hits counter, when set to `1`. Default is `0`.
+
+* __showHours__ :  show the elapsed hour markers, when set to `1`. Default is `0`.
+
 * __hotLevel__:  pageviews-per-min level that triggers an emphasised graph line. The line will go bold at half this value, and extra-bold beyond it. This is also the level at which the graph compresses vertically. Default is 50, which seems appropriate for articles; fronts need a higher figure, e.g. 250.
 
 * __hotPeriod__ : number of recent minutes over which to calcuate the hotLevel. Default is `5`.
 
-* __showStats__ : show the total hits counter, when set to `1`. Default is `0`.
-
-* __showHours__ :  show the elapsed hour markers, when set to `1`. Default is `0`.
+* __alpha__ : opacity of the graph lines. Range from 0 - 1. Default is `0.7`.
 
 * __smoothing__ : number of pixels over which to compute a moving average. Default is `5`.
 

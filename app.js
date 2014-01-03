@@ -8,6 +8,7 @@ var defaults = {              // Examples:
         height:      20,
         hotLevel:    50,
         hotPeriod:   5,
+        alpha:       0.7,
         smoothing:   5,
         showStats:   0,       // 1, to enable
         showHours:   0        // 1, to enable
@@ -64,6 +65,12 @@ function eqNoCase(a, b) {
     return a.toLowerCase() === b.toLowerCase();
 }
 
+function hexToRgba(hex, alpha) {
+    hex = hex.replace(/^#?([a-f\d])([a-f\d])([a-f\d])$/i, function(m, r, g, b) { return r + r + g + g + b + b; });
+    hex = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+    return 'rgba(' + (hex ? parseInt(hex[1], 16) + ',' + parseInt(hex[2], 16) + ',' + parseInt(hex[3], 16) : '0,0,0') +  ',' + alpha + ')';
+}
+
 function collateOphanData(data, opts) {
     var graphs = _.map(opts.graphs.split(','), function(graph) {
             var p = graph.split(':');
@@ -97,7 +104,7 @@ function collateOphanData(data, opts) {
         if (!graphs.length) { return; }
 
         graphs = _.map(graphs, function(graph){
-            var hotness = _.reduce(_.last(graph.data, opts.hotPeriod), function(m, n){ return m + n; }, 0) / opts.hotPeriod;
+            var hotness = average(_.last(graph.data, opts.hotPeriod));
             graph.hotness = hotness < opts.hotLevel ? hotness < opts.hotLevel/2 ? 1 : 2 : 3;
             graph.data = smooth(resample(graph.data, opts.width), opts.smoothing);
             return graph;
@@ -161,7 +168,7 @@ function draw(data, opts) {
             c.lineTo(opts.width + (x - data.points + 1)*xStep - 1, graphHeight - yStep*yCompress*y + 2); // + 2 so thick lines don't get cropped at top
         });
         c.lineWidth = s.hotness;
-        c.strokeStyle = '#' + s.color;
+        c.strokeStyle = hexToRgba(s.color, opts.alpha);
         c.stroke();
     });
 
@@ -178,7 +185,7 @@ function draw(data, opts) {
 http.createServer(function (req, res) {
     var opts = _.chain(url.parse(req.url, true).query)
         .omit(function(v, key) { return !_.has(defaults, key); })
-        .assign(defaults, function(a, b) { return a ? _.isNumber(b) ? _.parseInt(a) : a : b })
+        .assign(defaults, function(a, b) { return a ? _.isNumber(b) ? a % 1 === 0 ? parseInt(a, 10) : parseFloat(a) : a : b })
         .value();
 
     if (!opts.page) {
