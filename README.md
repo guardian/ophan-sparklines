@@ -23,7 +23,18 @@ Required
 
 Optional
 
-* __graphs__ : comma-separated names of dataseries from the Ophan breakdown, with optional hex colours (after a colon), e.g. `twitter:6666ff,facebook:000099`. The following are in Ophan at time of writing: `guardian`, `unknown - to content`, `unknown - to front`, `google`, `twitter`, `facebook`, `reddit`, `drudge report`, `outbrain`, `other`. Also supported is `total`, which is the default.
+* __graphs__ : comma-separated names of dataseries from the Ophan breakdown, with optional hex colours (after a colon), e.g. `twitter:6666ff,facebook:000099`. The following are in Ophan at time of writing:
+    * `guardian`,
+    * `unknown - to content`
+    * `unknown - to front`
+    * `google`
+    * `twitter`
+    * `facebook`
+    * `reddit`
+    * `drudge report`
+    * `outbrain`
+    * `other`  
+    Also supported is `total`, which is the default.
 
 * __markers__ : comma-separated vertical markers, as unix timestamps, with optional hex colours (after a colon), e.g. `1388408200:ff9900,1388409900:cccccc`
 
