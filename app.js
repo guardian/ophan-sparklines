@@ -34,16 +34,12 @@ http.createServer(function (req, res) {
                 var ophanData,
                     spark;
 
-                var start = new Date().getTime();
-
                 try { ophanData = JSON.parse(str); } catch(e) { ophanData = {}; }
-
 
                 spark = new Spark(params).draw(ophanData);
                 
                 if (spark) {
                     spark.toBuffer(function(err, buf){
-                        console.log(new Date().getTime() - start);
                         res.writeHead(200, {
                             'Content-Type': 'image/png',
                             'Content-Length': buf.length,
