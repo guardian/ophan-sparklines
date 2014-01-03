@@ -218,13 +218,15 @@ http.createServer(function (req, res) {
                 var ophanData;
 
                 try { ophanData = JSON.parse(str); } catch(e) { ophanData = {}; }
+                var start = new Date().getTime();
 
                 if (ophanData.totalHits > 0 && _.isArray(ophanData.seriesData)) {
                     ophanData = collateOphanData(ophanData, opts);
-                    
+
                     if (!ophanData) { res.end(); return; }
                     
                     draw(ophanData, opts).toBuffer(function(err, buf){
+                        console.log(new Date().getTime() - start);
                         res.writeHead(200, {
                             'Content-Type': 'image/png',
                             'Content-Length': buf.length,
