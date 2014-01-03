@@ -52,7 +52,7 @@ Optional
 
 * __alpha__ : opacity of the graph lines. Range from 0 - 1. Default is `0.7`.
 
-* __smoothing__ : number of pixels over which to compute a moving average. Default is `5`.
+* __smoothing__ : number of pixels over which to compute a moving average. For larger widths, this is worth increasing. Default is `5`.
 
 ### Installation
 
