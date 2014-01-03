@@ -3,17 +3,17 @@ Pageview Sparks
 
 __Small server-generated images, that graph page-views for Guardian content. Uses Ophan data__. 
 
-* Defaults settings  
+* Default rendering:  
 ![](./example/example01.png)  
-`?page=/lifeandstyle/2014/jan/03/12-new-years-resolutions-should-be-abandoned`
+`?page=/lifeandstyle/2014/jan/03/12-new-years-resolutions-should-be-abandoned`  
 
-* Seperate graphs specified, doubled dimensions  
+* Seperate graphs specified, dimensions doubled:  
 ![](./example/example02.png)  
-`...&graphs=guardian:4572A7,facebook:00b6f3&width=100&height=40`
+`...&graphs=guardian:4572A7,facebook:00b6f3&width=100&height=40`  
 
-* As above, with total pageviews, elapsed hour bars, marker point  
+* With a marker point, total pageviews, and elapsed hour vertical bars:  
 ![](./example/example03.png)  
-`...&markers=1388747300:ff9900&showHours=1&showStats=1`
+`...&markers=1388747300:ff9900&showStats=1&showHours=1`  
 
 ### Query string params:
 
@@ -23,7 +23,18 @@ Required
 
 Optional
 
-* __graphs__ : comma-separated names of dataseries from the Ophan breakdown, with optional hex colours (after a colon), e.g. `twitter:6666ff,facebook:000099`. The following are in Ophan at time of writing: `guardian`, `unknown - to content`, `unknown - to front`, `google`, `twitter`, `facebook`, `reddit`, `drudge report`, `outbrain`, `other`. Also supported is `total`, which is the default.
+* __graphs__ : comma-separated names of dataseries from the Ophan breakdown, with optional hex colours (after a colon), e.g. `twitter:6666ff,facebook:000099`. The following are in Ophan at time of writing:
+    * `guardian`,
+    * `unknown - to content`
+    * `unknown - to front`
+    * `google`
+    * `twitter`
+    * `facebook`
+    * `reddit`
+    * `drudge report`
+    * `outbrain`
+    * `other`  
+    Also supported is `total`, which is the default.
 
 * __markers__ : comma-separated vertical markers, as unix timestamps, with optional hex colours (after a colon), e.g. `1388408200:ff9900,1388409900:cccccc`
 
@@ -45,7 +56,7 @@ Optional
 
 ### Installation
 
-Requires Node and Cairo. For Cairo installation, see the dependencies part of [Wiki](https://github.com/LearnBoost/node-canvas/wiki/_pages) from the [node-canvas](https://github.com/LearnBoost/node-canvas) project. Then:
+Requires Node and [Cairo](http://cairographics.org/). For Cairo installation, see the dependencies part of [Wiki](https://github.com/LearnBoost/node-canvas/wiki/_pages) from the [node-canvas](https://github.com/LearnBoost/node-canvas) project. Then:
 
 ```
 $ npm install
