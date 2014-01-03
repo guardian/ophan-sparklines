@@ -1,7 +1,7 @@
 Pageview Sparks
 ===============
 
-__Small server-generated images, that graph page-views for Guardian content. Uses Ophan data__. 
+__Small server-generated graphs of Guardian content page-views. Uses Ophan data__. 
 
 * Default rendering:  
 ![](./example/example01.png)  
@@ -56,8 +56,16 @@ Optional
 
 ### Installation
 
-Requires Node and [Cairo](http://cairographics.org/). For Cairo installation, see the dependencies part of [Wiki](https://github.com/LearnBoost/node-canvas/wiki/_pages) from the [node-canvas](https://github.com/LearnBoost/node-canvas) project. Then:
+Requires Node and [Cairo](http://cairographics.org/).
+
+For Cairo installation, see the dependencies part of [Wiki](https://github.com/LearnBoost/node-canvas/wiki/_pages) from the [node-canvas](https://github.com/LearnBoost/node-canvas) project.
+
+Then:
 
 ```
 $ npm install
 ```
+
+Create a file called `config.json` with `ophanHost` and `ophanKey` properties (see `sample-config.json`).
+
+Then in a browser: `http://localhost:3000/?page=/uk`
