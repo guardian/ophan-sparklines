@@ -7,8 +7,8 @@ var defaults = {              // Examples:
         width:       50,
         height:      20,
         hotLevel:    50,
-        hotPeriod:   3,
-        smoothing:   3,
+        hotPeriod:   5,
+        smoothing:   5,
         showStats:   0,       // 1, to enable
         showHours:   0        // 1, to enable
     },
@@ -18,31 +18,31 @@ var defaults = {              // Examples:
     url = require('url'),
     _ = require('lodash');
 
-function resample(input, newLen) {
-    var inputLen = input.length,
+function resample(arr, newLen) {
+    var arrLen = arr.length,
         span;
        
-    if (inputLen <= newLen) { return input; }
+    if (arrLen <= newLen) { return arr; }
    
-    span = inputLen / newLen;
+    span = arrLen / newLen;
 
-    return _.map(_.range(0, inputLen - 1, span), function(left){
+    return _.map(_.range(0, arrLen - 1, span), function(left){
         var right = left + span,
             lf = Math.floor(left),
             lc = Math.ceil(left),
             rf = Math.floor(right),
-            rc = Math.min(Math.ceil(right), inputLen - 1);
+            rc = Math.min(Math.ceil(right), arrLen - 1);
 
         return (
-            _.reduce(_.range(lc, rf), function(sum, i) { return sum + input[i]; }, 0) +
-            input[lf] * (lc - left) +
-            input[rc] * (right - rf)
+            _.reduce(_.range(lc, rf), function(sum, i) { return sum + arr[i]; }, 0) +
+            arr[lf] * (lc - left) +
+            arr[rc] * (right - rf)
         ) / span;
     });
 }
 
 function smooth(arr, r) {
-    if (r < 2) { return input; }
+    if (r < 2) { return arr; }
     return _.map(arr, function(x, i, arr) {
         return average(arr.slice(i, i+r));  
     });
