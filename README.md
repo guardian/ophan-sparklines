@@ -42,13 +42,13 @@ Optional
 
 * __hotLevel__:  pageviews-per-min level that triggers an emphasised graph line. The line will go bold at half this value, and extra-bold beyond it. This is also the level at which the graph compresses vertically. Default is 50, which seems appropriate for articles; fronts need a higher figure, e.g. 250.
 
-* __hotPeriod__ : number of recent minutes over which to calcuate the hotLevel. Default is 3.
+* __hotPeriod__ : number of recent minutes over which to calcuate the hotLevel. Default is `5`.
 
 * __showStats__ : show the total hits counter, when set to `1`. Default is `0`.
 
 * __showHours__ :  show the elapsed hour markers, when set to `1`. Default is `0`.
 
-* __smoothing__ : number of pixels over which to compute a moving average. Default is `3`.
+* __smoothing__ : number of pixels over which to compute a moving average. Default is `5`.
 
 ### Installation
 
