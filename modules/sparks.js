@@ -186,15 +186,11 @@ function draw(data, opts) {
     return canvas;
 }
 
-function Spark(params) {
-    var opts = _.chain(params)
-        .assign(defaults, function(a, b) { return a ? _.isNumber(b) ? a % 1 === 0 ? parseInt(a, 10) : parseFloat(a) : a : b; })
-        .value();
+module.exports = function (params) {
+    var opts = _.assign(params, defaults, function(a, b) { return a ? _.isNumber(b) ? a % 1 === 0 ? parseInt(a, 10) : parseFloat(a) : a : b; });
 
     this.draw = function(ophanData) {
         return draw(collateOphanData(ophanData, opts), opts);
     };
-}
-
-module.exports = Spark;
+};
 
