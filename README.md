@@ -29,7 +29,9 @@ __Small server-generated graphs of Guardian content page-views. Uses Ophan data_
 
 If the number of data points is greater than the width of the graph, the points are resampled to fit. If the number of data points is less than the width, the graph is right-justified (so "now" aligns for vertically stacked graphs) and it's width is partially stretched to make the graph more readable. Smoothing is applied, and can be adjusted. Set the `hotLevel` parameter to indicate "significant pageviews per minute" for the type of content in question. This affects the y-scale of the graph. 
 
-### Query string params:
+### Query API
+
+All parameters are optional.
 
 * __page__ : url of the Guardian content. Only the pathname part is used. Default is the empty string.
 
