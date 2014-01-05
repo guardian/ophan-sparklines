@@ -16,42 +16,37 @@ if(!config.ophanKey) {
 }
 
 http.createServer(function (req, res) {
-    var ophanReq,
-        params = url.parse(req.url, true).query;
+    var params = url.parse(req.url, true).query,
+        ophanReq = http.request(
+            {
+              host: config.ophanHost,
+              path: '/api/breakdown?path=' + url.parse(params.page || '/uk').pathname + '&key=' + config.ophanKey
+            },
+            function(proxied) {
+                var ophanData = '',
+                    spark;
 
-    if (!params.page) { res.end(); return; }
+                proxied.on('data', function (chunk) { ophanData += chunk; });
+                proxied.on('end', function () {
+                    try { ophanData = JSON.parse(ophanData); } catch(e) { ophanData = {}; }
 
-    ophanReq = http.request(
-        {
-          host: config.ophanHost,
-          path: '/api/breakdown?path=' + url.parse(params.page).pathname + '&key=' + config.ophanKey
-        },
-        function(proxied) {
-            var ophanData = '',
-                spark;
-
-            proxied.on('data', function (chunk) { ophanData += chunk; });
-
-            proxied.on('end', function () {
-                try { ophanData = JSON.parse(ophanData); } catch(e) { ophanData = {}; }
-
-                spark = ophanData.totalHits ? new Spark(params).draw(ophanData) : false;
-                
-                if (spark) {
-                    spark.toBuffer(function(err, buf){
-                        res.writeHead(200, {
-                            'Content-Type': 'image/png',
-                            'Content-Length': buf.length,
-                            'Cache-Control': 'public,max-age=30'
+                    spark = ophanData.totalHits ? new Spark(params).draw(ophanData) : false;
+                    
+                    if (spark) {
+                        spark.toBuffer(function(err, buf){
+                            res.writeHead(200, {
+                                'Content-Type': 'image/png',
+                                'Content-Length': buf.length,
+                                'Cache-Control': 'public,max-age=30'
+                            });
+                            res.end(buf, 'binary');
                         });
-                        res.end(buf, 'binary');
-                    });
-                } else {
-                    res.end();
-                }
-            });
-        }
-    );
+                    } else {
+                        res.end();
+                    }
+                });
+            }
+        );
 
     ophanReq.on('error', function(e) {
         console.log(e.message);

@@ -1,7 +1,6 @@
 "use strict";
 
 var defaults = {              // Examples:
-        page:        '',      // '/uk-news/2014/jan/02/uk-braced-further-floods-storms-atlantic'
         graphs:      'total', // 'other:d61d00,google:89A54E,guardian:4572A7',
         markers:     '',      // 'markers=1388680400:ff9900,1388681200:ff0000'
         width:       50,
@@ -120,38 +119,44 @@ function collateOphanData(data, opts) {
 }
 
 function draw(data, opts) {
-    var graphHeight = opts.height - (opts.showStats ? 11 : 2),
-        xStep = data.points < opts.width/2 ? data.points < opts.width/3 ? 3 : 2 : 1,
+    var w = opts.width,
+        h = opts.height,
+        p = data.points,
+        graphHeight = h - (opts.showStats ? 11 : 2),
+        // point-width is 10% of width for a single-point graph, progressing down to 1px as the point number grows.
+        xStep = p > 0 && p < w ? 0.9 + 0.1 * w / p : 1,
         yStep = graphHeight/opts.hotLevel,
         yCompress = data.max > opts.hotLevel ? opts.hotLevel/data.max : 1,
-        seconds = data.endSec - data.startSec,
-        canvas = new Canvas(opts.width, opts.height),
-        c = canvas.getContext('2d'),
-        drawMark = function (second, hexColor, withFlag) {
-            var x = Math.floor(opts.width + ((second - data.startSec)/seconds - 1)*data.points*xStep);
+        elapsedSec = data.endSec - data.startSec,
+        canvas = new Canvas(w, h),
+        ctx = canvas.getContext('2d'),
+        drawMark = function (markSec, hexColor, withFlag) {
+            var x;
+
+            if (markSec < data.startSec) { return; }
+            x = Math.floor(w + ((Math.min(markSec, data.endSec) - data.startSec)/elapsedSec - 1)*p*xStep);
             
-            c.beginPath();
-            c.lineTo(x, 0);
-            c.lineTo(x, graphHeight + 2);
-            c.lineWidth = 1;
-            c.strokeStyle = '#' + (hexColor || '666666');
-            c.stroke();
+            ctx.beginPath();
+            ctx.lineTo(x, 2);
+            ctx.lineTo(x, graphHeight + 2);
+            ctx.lineWidth = 1;
+            ctx.strokeStyle = '#' + (hexColor || '666666');
+            ctx.stroke();
 
             if (withFlag) {
-                c.fillStyle = '#' + (hexColor || '666666');
-                c.fillRect(x - 2, 0, 4, 2);
-                c.fillRect(x - 1, 2, 2, 1);
+                ctx.fillStyle = '#' + (hexColor || '666666');
+                ctx.fillRect(x - 2, 0, 4, 2);
             }
         };
 
     if (opts.showStats) {
-        c.font = 'bold 9px Arial';
-        c.textAlign = 'right';
-        c.fillStyle = '#999999';
-        c.fillText(numWithCommas(data.totalHits), opts.width - 1, opts.height - 1);
+        ctx.font = 'bold 9px Arial';
+        ctx.textAlign = 'right';
+        ctx.fillStyle = '#999999';
+        ctx.fillText(numWithCommas(data.totalHits), w - 1, h - 1);
     }
 
-    c.translate(-0.5, -0.5); // reduce antialiasing
+    ctx.translate(-0.5, -0.5); // reduce antialiasing
 
     if (opts.showHours) {
         _.each(_.range(data.endSec, data.startSec, -3600), function(hour) {
@@ -159,23 +164,24 @@ function draw(data, opts) {
         });
     }
 
-    _.each(data.seriesData, function(s) {
-        c.beginPath();
-        _.each(s.data, function(y, x){
-            if (!x && data.points === opts.width) { return; }
-            c.lineTo(opts.width + (x - data.points + 1)*xStep - 1, graphHeight - yStep*yCompress*y + 2); // + 2 so thick lines don't get cropped at top
-        });
-        c.lineWidth = s.hotness;
-        c.strokeStyle = hexToRgba(s.color, opts.alpha);
-        c.stroke();
-    });
-
     if (opts.markers) {
         _.each(opts.markers.split(','), function(m) {
             m = m.split(':');
             drawMark(_.parseInt(m[0]), m[1], true);
         });
     }
+
+    _.each(data.seriesData, function(s) {
+        if (average(s.data) < 1) { return; }
+        ctx.beginPath();
+        _.each(s.data, function(y, x){
+            if (!x && p === w) { return; }
+            ctx.lineTo(w + (x - p + 1)*xStep - 1, graphHeight - yStep*yCompress*y + 2); // + 2 so thick lines don't get cropped at top
+        });
+        ctx.lineWidth = s.hotness;
+        ctx.strokeStyle = hexToRgba(s.color, opts.alpha);
+        ctx.stroke();
+    });
 
     return canvas;
 }

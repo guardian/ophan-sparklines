@@ -5,11 +5,11 @@ __Small server-generated graphs of Guardian content page-views. Uses Ophan data_
 
 * Default rendering:  
 ![](./example/example01.png)  
-`?page=/lifeandstyle/2014/jan/03/12-new-years-resolutions-should-be-abandoned`  
+`?page=http://www.theguardian.com/football/2014/jan/05/fa-cup-fourth-round-draw-live`  
 
 * Seperate graphs specified, dimensions doubled:  
 ![](./example/example02.png)  
-`...&graphs=guardian:4572A7,facebook:00b6f3&width=100&height=40`  
+`...&graphs=guardian:000099,other:0099ff,google:669900&width=100&height=40`  
 
 * With a marker point, total pageviews, and elapsed hour vertical bars:  
 ![](./example/example03.png)  
@@ -17,11 +17,7 @@ __Small server-generated graphs of Guardian content page-views. Uses Ophan data_
 
 ### Query string params:
 
-Required
-
-* __page__ : url of the Guardian content. Only the pathname part is used.
-
-Optional
+* __page__ : url of the Guardian content. Only the pathname part is used. Default is `\uk`
 
 * __graphs__ : comma-separated names of dataseries from the Ophan breakdown, with optional hex colours (after a colon), e.g. `twitter:6666ff,facebook:000099`. The following are in Ophan at time of writing:
     * `guardian`,
