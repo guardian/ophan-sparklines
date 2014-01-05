@@ -80,4 +80,4 @@ $ npm install
 
 Create a file called `config.json` with `ophanHost` and `ophanKey` properties (see `sample-config.json`).
 
-Then in a browser: `http://localhost:3000/?page=/uk`
+Then in a browser: `http://localhost:3000/`
