@@ -4,7 +4,7 @@
             #inputs {
                 overflow: auto;
             }
-            .input-name {
+            label {
                 float: left;
                 clear: left;
                 width: 75px;
@@ -51,9 +51,8 @@
                 alpha:       0.7,
                 smoothing:   5
             },
-            baseUrl = 'http://localhost:3000',
-            //baseUrl = window.location.protocol + '//' + window.location.host,
-            html = '';
+            baseUrl = 'http://localhost:3000';
+            //baseUrl = window.location.protocol + '//' + window.location.host;
 
             function processForm() {
                 var url = baseUrl + '/?' + Array.prototype.slice.call(document.querySelectorAll('input[type="text"]'))
@@ -76,23 +75,26 @@
                 return false;
             }
 
-            Object.keys(defaults)
-            .forEach(function(key) {
-                var input = document.createElement("input");
-                    title = document.createElement("div");
+            function createForm() {
+                Object.keys(defaults)
+                .forEach(function(key) {
+                    var input = document.createElement("input");
+                        label = document.createElement("label");
 
-                input.setAttribute("type", "text");
-                input.setAttribute("id", key);
-                input.setAttribute("value", '');
-                input.setAttribute("placeholder", defaults[key]);
+                    input.setAttribute("type", "text");
+                    input.setAttribute("id", key);
+                    input.setAttribute("value", '');
+                    input.setAttribute("placeholder", defaults[key]);
 
-                title.setAttribute("class", "input-name");
-                title.innerHTML = key;
+                    label.setAttribute("for", key);
+                    label.innerHTML = key;
 
-                document.getElementById("inputs").appendChild(title);
-                document.getElementById("inputs").appendChild(input);
-            });
+                    document.getElementById("inputs").appendChild(label);
+                    document.getElementById("inputs").appendChild(input);
+                });
+            }
 
+            createForm();
         </script>
     </body>
 </html>
