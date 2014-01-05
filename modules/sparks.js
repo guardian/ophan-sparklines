@@ -22,7 +22,7 @@ function resample(arr, newLen) {
        
     if (arrLen <= newLen) { return arr; }
    
-    span = arrLen / newLen;
+    span = arrLen / (newLen || 1);
 
     return _.map(_.range(0, arrLen - 1, span), function(left){
         var right = left + span,
@@ -35,7 +35,7 @@ function resample(arr, newLen) {
             _.reduce(_.range(lc, rf), function(sum, i) { return sum + arr[i]; }, 0) +
             arr[lf] * (lc - left) +
             arr[rc] * (right - rf)
-        ) / span;
+        ) / (span || 1);
     });
 }
 
@@ -109,7 +109,6 @@ function collateOphanData(data, opts) {
 
         return {
             seriesData: graphs,
-            max: _.max(_.map(graphs, function(graph) { return _.max(graph.data); })),
             totalHits: data.totalHits,
             points: graphs[0].data.length,
             startSec: _.first(data.seriesData[0].data).dateTime/1000,
@@ -124,9 +123,9 @@ function draw(data, opts) {
         p = data.points,
         graphHeight = h - (opts.showStats ? 11 : 2),
         // point-width is 10% of width for a single-point graph, progressing down to 1px as the point number grows.
-        xStep = p > 0 && p < w ? 0.9 + 0.1 * w / p : 1,
-        yStep = graphHeight/opts.hotLevel,
-        yCompress = data.max > opts.hotLevel ? opts.hotLevel/data.max : 1,
+        xStep = p < w ? 0.9 + 0.1 * w /(p || 1) : 1,
+        yStep = graphHeight/(opts.hotLevel || 1),
+        yCompress = Math.min(opts.hotLevel/(_.max(_.map(data.seriesData, function(graph) { return _.max(graph.data); })) || 1), 1),
         elapsedSec = data.endSec - data.startSec,
         canvas = new Canvas(w, h),
         ctx = canvas.getContext('2d'),
@@ -135,7 +134,7 @@ function draw(data, opts) {
 
             if (!markSec || markSec < data.startSec) { return; }
             
-            x = Math.floor(w + ((Math.min(markSec, data.endSec) - data.startSec)/elapsedSec - 1)*p*xStep);
+            x = Math.floor(w + ((Math.min(markSec, data.endSec) - data.startSec)/(elapsedSec || 1) - 1)*p*xStep);
             
             ctx.beginPath();
             ctx.lineTo(x, 2);
