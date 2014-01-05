@@ -133,7 +133,8 @@ function draw(data, opts) {
         drawMark = function (markSec, hexColor, withFlag) {
             var x;
 
-            if (markSec < data.startSec) { return; }
+            if (!markSec || markSec < data.startSec) { return; }
+            
             x = Math.floor(w + ((Math.min(markSec, data.endSec) - data.startSec)/elapsedSec - 1)*p*xStep);
             
             ctx.beginPath();

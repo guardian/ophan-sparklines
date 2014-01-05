@@ -20,7 +20,7 @@ http.createServer(function (req, res) {
         ophanReq = http.request(
             {
               host: config.ophanHost,
-              path: '/api/breakdown?path=' + url.parse(params.page || '/uk').pathname + '&key=' + config.ophanKey
+              path: '/api/breakdown?key=' + config.ophanKey + (params.page ? '&path=' + url.parse(params.page).pathname : '')
             },
             function(proxied) {
                 var ophanData = '',

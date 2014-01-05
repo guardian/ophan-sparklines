@@ -15,9 +15,13 @@ __Small server-generated graphs of Guardian content page-views. Uses Ophan data_
 ![](./example/example03.png)  
 `...&markers=1388747300:ff9900&showStats=1&showHours=1`  
 
+* Fully loaded...  
+![](./example/example04.png)  
+`...&smoothing=15&markers=1388901600:f90,1388923200:000,&graphs=guardian:009,other:ccc,twitter:09f,facebook:0CC,google:690&width=300&height=100&hotLevel=2000&&showStats=1&showHours=1`
+
 ### Query string params:
 
-* __page__ : url of the Guardian content. Only the pathname part is used. Default is `\uk`
+* __page__ : url of the Guardian content. Only the pathname part is used. Default is the empty string.
 
 * __graphs__ : comma-separated names of dataseries from the Ophan breakdown, with optional hex colours (after a colon), e.g. `twitter:6666ff,facebook:000099`. The following are in Ophan at time of writing:
     * `guardian`,
