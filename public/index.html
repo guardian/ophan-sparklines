@@ -1,0 +1,98 @@
+<html>
+    <head>
+        <style>
+            #inputs {
+                overflow: auto;
+            }
+            .input-name {
+                float: left;
+                clear: left;
+                width: 75px;
+                line-height: 22px;
+                font-size: 16px;
+                margin: 0 0 10px 0;
+            }
+            input[type="text"] {
+                float: left;
+            }
+            img {
+                display: block;
+                background-color: #ffffff;
+            }
+            #url {
+                display: block;
+                text-decoration: none;
+                font-family: courier, monospace;
+                font-size: 12px;
+                color: #000099;
+                margin: 10px 0;
+            }
+        </style>
+    </head>
+    <body>
+        <img id="img" src="" />
+        <a href="" id="url" target="_blank"></a>
+        <form id="form" onsubmit="return processForm();">
+            <div id="inputs"></div>
+            <input type="submit" value="Get Graph" />
+        </form>
+        
+        <script>
+            var defaults = {
+                page:        '',
+                graphs:      'total', // 'other:d61d00,google:89A54E,guardian:4572A7',
+                markers:     '',      // 'markers=1388680400:ff9900,1388681200:ff0000'
+                showStats:   0,       // 1, to enable
+                showHours:   0,       // 1, to enable
+                width:       50,
+                height:      20,
+                hotLevel:    50,
+                hotPeriod:   5,
+                alpha:       0.7,
+                smoothing:   5
+            },
+            baseUrl = 'http://localhost:3000',
+            //baseUrl = window.location.protocol + '//' + window.location.host,
+            html = '';
+
+            function processForm() {
+                var url = baseUrl + '/?' + Array.prototype.slice.call(document.querySelectorAll('input[type="text"]'))
+                .map(function (el) {
+                    el.value = el.value.replace(/^\s+|\s+$/gm, '');
+                    return el;
+                })
+                .filter(function (el) {
+                    return el.value !== '';
+                })
+                .map(function (el) {
+                    return el.id + '=' + el.value;
+                })
+                .join('&');
+
+                document.getElementById("img").src = url;
+                document.getElementById("url").href = url;
+                document.getElementById("url").innerHTML = url;
+                
+                return false;
+            }
+
+            Object.keys(defaults)
+            .forEach(function(key) {
+                var input = document.createElement("input");
+                    title = document.createElement("div");
+
+                input.setAttribute("type", "text");
+                input.setAttribute("id", key);
+                input.setAttribute("value", '');
+                input.setAttribute("placeholder", defaults[key]);
+
+                title.setAttribute("class", "input-name");
+                title.innerHTML = key;
+
+                document.getElementById("inputs").appendChild(title);
+                document.getElementById("inputs").appendChild(input);
+            });
+
+        </script>
+    </body>
+</html>
