@@ -50,9 +50,9 @@ All parameters are optional.
 
 * __markers__ : comma-separated vertical markers, as unix timestamps, with optional hex colours (after a colon), e.g. `1388408200:ff9900,1388409900:cccccc`
 
-* __width__ : in pixels. Default is 50.
+* __width__ : in pixels. Default is `50`.
 
-* __height__ : in pixels. Default is 20.
+* __height__ : in pixels. Default is `20`.
 
 * __showStats__ : show the total hits counter, when set to `1`. Default is `0`.
 
