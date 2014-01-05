@@ -27,7 +27,7 @@ __Small server-generated graphs of Guardian content page-views. Uses Ophan data_
 ...&smoothing=15&markers=1388901600:f90,1388923200:000,&graphs=guardian:009,other:ccc,twitter:09f,facebook:0CC,google:690&width=300&height=100&hotLevel=2000&&showStats=1&showHours=1
 ```
 
-If the number of data points is greater than the width of the graph, the points are resampled to fit. If the number of data points is less than the width, the graph is right-justified (so "now" aligns for vertically stacked graphs) and the datapoint width is also stretched slightly to make the graph more readable. Smoothing is applied, and can be adjusted. Set the `hotLevel` parameter to indicate "significant pageviews per minute" for the type of content in question. This affects the y-scale of the graph. 
+If the number of data points is greater than the width of the graph, the points are resampled to fit. If the number of data points is less than the width, the graph is right-justified (so "now" aligns for vertically stacked graphs) and it's width is partially stretched to make the graph more readable. Smoothing is applied, and can be adjusted. Set the `hotLevel` parameter to indicate "significant pageviews per minute" for the type of content in question. This affects the y-scale of the graph. 
 
 ### Query string params:
 
@@ -56,7 +56,7 @@ If the number of data points is greater than the width of the graph, the points 
 
 * __showHours__ :  show the elapsed hour markers, when set to `1`. Default is `0`.
 
-* __hotLevel__:  upper y-bound of the graph, in pageviews-per-minute. Beyond this, the whole graph compresses vertically. Default is `50` which is appropriate for articles; fronts need a mich higher figure. Recent activity beyond this level causes a bold graph line (and a half-bold line at half this level). 
+* __hotLevel__:  upper y-bound of the graph, in pageviews-per-minute. Beyond this, the whole graph compresses vertically. Default is `50` which is appropriate for articles; fronts need a much higher figure. Recent activity beyond this level causes a bold graph line (and a half-bold line at half this level). 
 
 * __hotPeriod__ : number of minutes over which to calcuate the "recent activity" above. Default is `5`.
 
