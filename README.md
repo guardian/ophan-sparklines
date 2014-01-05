@@ -68,13 +68,13 @@ All parameters are optional.
 
 * __alpha__ : opacity of the graph lines. Range from 0 - 1. Default is `0.7`.
 
-* __smoothing__ : number of pixels over which to compute a moving average. For larger widths, this is worth increasing. Default is `5`.
+* __smoothing__ : number of points over which a moving average is computed, for smoothing. For larger graph widths this can be worth increasing. Default is `5`.
 
 ### Installation
 
 Requires Node and [Cairo](http://cairographics.org/).
 
-For Cairo installation, see the dependencies part of [Wiki](https://github.com/LearnBoost/node-canvas/wiki/_pages) from the [node-canvas](https://github.com/LearnBoost/node-canvas) project.
+For Cairo installation, see the [Wiki](https://github.com/LearnBoost/node-canvas/wiki/_pages) from the [node-canvas](https://github.com/LearnBoost/node-canvas) project.
 
 Then:
 
