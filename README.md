@@ -5,19 +5,27 @@ __Small server-generated graphs of Guardian content page-views. Uses Ophan data_
 
 * Default rendering:  
 ![](./example/example01.png)  
-`?page=http://www.theguardian.com/football/2014/jan/05/fa-cup-fourth-round-draw-live`  
+```
+?page=http://www.theguardian.com/football/2014/jan/05/fa-cup-fourth-round-draw-live
+```
 
 * Seperate graphs specified, dimensions doubled:  
 ![](./example/example02.png)  
-`...&graphs=guardian:000099,other:0099ff,google:669900&width=100&height=40`  
+```
+...&graphs=guardian:000099,other:0099ff,google:669900&width=100&height=40
+```
 
 * With a marker point, total pageviews, and elapsed hour vertical bars:  
 ![](./example/example03.png)  
-`...&markers=1388747300:ff9900&showStats=1&showHours=1`  
+```
+...&markers=1388747300:ff9900&showStats=1&showHours=1
+```
 
 * Fully loaded...  
 ![](./example/example04.png)  
-`...&smoothing=15&markers=1388901600:f90,1388923200:000,&graphs=guardian:009,other:ccc,twitter:09f,facebook:0CC,google:690&width=300&height=100&hotLevel=2000&&showStats=1&showHours=1`
+```
+...&smoothing=15&markers=1388901600:f90,1388923200:000,&graphs=guardian:009,other:ccc,twitter:09f,facebook:0CC,google:690&width=300&height=100&hotLevel=2000&&showStats=1&showHours=1
+```
 
 ### Query string params:
 
