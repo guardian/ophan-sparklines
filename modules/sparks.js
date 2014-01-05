@@ -187,7 +187,7 @@ function draw(data, opts) {
 }
 
 module.exports = function (params) {
-    var opts = _.assign(params, defaults, function(a, b) { return a ? _.isNumber(b) ? +a || 0 : a : b; });
+    var opts = _.assign(params, defaults, function(a, b) { return !_.isUndefined(a) ? _.isNumber(b) ? +a || 0 : a : b; });
 
     this.draw = function(ophanData) {
         return draw(collateOphanData(ophanData, opts), opts);
