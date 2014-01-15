@@ -4,6 +4,7 @@
             body {
                 font-family: arial;
                 color: #333333;
+                background: #eeeeee;
             }
             #inputs {
                 overflow: auto;
@@ -33,7 +34,10 @@
                 white-space: nowrap;
             }
             #img {
-                padding: 10px 0 0 0;
+                display: inline-block;
+                margin: 10px 0 0 0;
+                padding: 10px;
+                background: #ffffff;
             }
             #form {
                 float: left;
@@ -41,14 +45,16 @@
         </style>
     </head>
     <body>
+        <h1>sparkplug</h1>
+
         <form id="form" action="?" onsubmit="return processForm(true);">
             <div id="inputs"></div>
             <input type="submit" value="Get Graph" />
         </form>
        
         <div id="result">
-            image URL: <a href="" id="url" target="_blank"></a>
-            image PNG:<br />
+            image url: <a href="" id="url" target="_blank"></a>
+            image png:<br />
             <img id="img" src="" />
         </div>
 
