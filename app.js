@@ -3,7 +3,13 @@
 var config = require('./config.json'),
     Spark = require('./modules/sparks'),
     http = require('http'),
-    url = require('url');
+    url = require('url'),
+    fs = require('fs'),
+    
+    statics = {
+        "/test": { filepath: "public/test.html", contentType: "text/html" },
+        "/lodash.js": { filepath: "node_modules/lodash/lodash.js", contentType: "application/javascript"}
+    };
 
 if(!config.ophanHost) {
     console.log('Please set the "ophanHost" property in config.json');
@@ -15,38 +21,59 @@ if(!config.ophanKey) {
     process.exit(1);
 }
 
+function serveStatic(opts, res) {
+    fs.readFile(opts.filepath, function(err, data) {
+        if (!err) {
+            res.writeHead(200, {
+                'Content-Type': opts.contentType,
+                'Content-Length': data.length
+            });
+            res.end(data);
+        }
+    });
+}
+
 http.createServer(function (req, res) {
-    var params = url.parse(req.url, true).query,
-        ophanReq = http.request(
-            {
-              host: config.ophanHost,
-              path: '/api/breakdown?key=' + config.ophanKey + (params.page ? '&path=' + url.parse(params.page).pathname : '')
-            },
-            function(proxied) {
-                var ophanData = '',
-                    spark;
+    var urlParts = url.parse(req.url, true),
+        staticFile = statics[urlParts.pathname],        
+        query = urlParts.query,
+        ophanReq;
 
-                proxied.on('data', function (chunk) { ophanData += chunk; });
-                proxied.on('end', function () {
-                    try { ophanData = JSON.parse(ophanData); } catch(e) { ophanData = {}; }
+    if (staticFile) {
+        serveStatic(staticFile, res);
+        return;
+    };
 
-                    spark = ophanData.totalHits ? new Spark(params).draw(ophanData) : false;
-                    
-                    if (spark) {
-                        spark.toBuffer(function(err, buf){
-                            res.writeHead(200, {
-                                'Content-Type': 'image/png',
-                                'Content-Length': buf.length,
-                                'Cache-Control': 'public,max-age=30'
-                            });
-                            res.end(buf, 'binary');
+    ophanReq = http.request(
+        {
+          host: config.ophanHost,
+          path: '/api/breakdown?key=' + config.ophanKey + (query.page ? '&path=' + url.parse(query.page).pathname : '')
+        },
+        function(proxied) {
+            var ophanData = '',
+                spark;
+
+            proxied.on('data', function (chunk) { ophanData += chunk; });
+            proxied.on('end', function () {
+                try { ophanData = JSON.parse(ophanData); } catch(e) { ophanData = {}; }
+
+                spark = ophanData.totalHits ? new Spark(query).draw(ophanData) : false;
+                
+                if (spark) {
+                    spark.toBuffer(function(err, buf){
+                        res.writeHead(200, {
+                            'Content-Type': 'image/png',
+                            'Content-Length': buf.length,
+                            'Cache-Control': 'public,max-age=30'
                         });
-                    } else {
-                        res.end();
-                    }
-                });
-            }
-        );
+                        res.end(buf, 'binary');
+                    });
+                } else {
+                    res.end();
+                }
+            });
+        }
+    );
 
     ophanReq.on('error', function(e) {
         console.log(e.message);

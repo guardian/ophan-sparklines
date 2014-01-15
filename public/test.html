@@ -1,0 +1,136 @@
+<html>
+    <head>
+        <style>
+            body {
+                font-family: arial;
+                color: #333333;
+            }
+            #inputs {
+                overflow: auto;
+            }
+            label {
+                float: left;
+                clear: left;
+                width: 90px;
+                line-height: 22px;
+                font-size: 16px;
+                margin: 0 0 10px 0;
+            }
+            input[type="text"] {
+                float: left;
+                width: 200px;
+            }
+            #result {
+                padding: 1px 0 0 320px;
+            }
+            #url {
+                display: block;
+                text-decoration: none;
+                font-family: courier, monospace;
+                font-size: 12px;
+                color: #000099;
+                margin: 5px 0 20px 0;
+                white-space: nowrap;
+            }
+            #img {
+                padding: 10px 0 0 0;
+            }
+            #form {
+                float: left;
+            }
+        </style>
+    </head>
+    <body>
+        <form id="form" action="?" onsubmit="return processForm(true);">
+            <div id="inputs"></div>
+            <input type="submit" value="Get Graph" />
+        </form>
+       
+        <div id="result">
+            image URL: <a href="" id="url" target="_blank"></a>
+            image PNG:<br />
+            <img id="img" src="" />
+        </div>
+
+        <script src="/lodash.js"></script>
+        <script>
+            var defaults = {
+                    page:        '',
+                    graphs:      'total', // 'other:d61d00,google:89A54E,guardian:4572A7',
+                    markers:     '',      // 'markers=1388680400:ff9900,1388681200:ff0000'
+                    showStats:   0,       // 1, to enable
+                    showHours:   0,       // 1, to enable
+                    width:       50,
+                    height:      20,
+                    hotLevel:    50,
+                    hotPeriod:   5,
+                    alpha:       0.7,
+                    smoothing:   5
+                },
+
+                baseUrl = window.location.protocol + '//' + window.location.host,
+
+                query = function() {
+                    return _.chain(_.rest(window.location.search).join('').split('&'))
+                        .filter(function(kv) { return kv; })
+                        .map(function(kv) { return kv.split('='); })
+                        .map(function(kv) { return [kv[0], kv[1] ? decodeURIComponent(kv[1]) : undefined]; })
+                        .object()
+                        .value();
+                }(); 
+
+
+
+            function processForm(reload) {
+                var qStr = Array.prototype.slice.call(document.querySelectorAll('input[type="text"]'))
+                    .map(function (el) {
+                        el.value = el.value.replace(/^\s+|\s+$/gm, '');
+                        return el;
+                    })
+                    .filter(function (el) {
+                        return el.value !== '';
+                    })
+                    .map(function (el) {
+                        return el.id + '=' + el.value;
+                    })
+                    .join('&'),
+
+                    url = baseUrl + '/?' + qStr;
+
+                if (reload) {
+                    console.log(qStr);
+                    //return false;
+                    window.location.href = "/test?" + qStr;
+                } else {
+                    document.getElementById("img").src = url;
+                    document.getElementById("url").href = url;
+                    document.getElementById("url").innerHTML = url;
+                }
+
+                return false;
+            }
+
+            function createForm(opts) {
+                Object.keys(defaults)
+                .forEach(function(key) {
+                    var input = document.createElement("input");
+                        label = document.createElement("label");
+
+                    input.setAttribute("type", "text");
+                    input.setAttribute("id", key);
+                    input.setAttribute("value", _.has(opts, key) ? opts[key] : '');
+                    input.setAttribute("placeholder", defaults[key]);
+
+                    label.setAttribute("for", key);
+                    label.innerHTML = key;
+
+                    document.getElementById("inputs").appendChild(label);
+                    document.getElementById("inputs").appendChild(input);
+                });
+            }
+
+            createForm(query);
+            processForm();
+        </script>
+    </body>
+</html>
