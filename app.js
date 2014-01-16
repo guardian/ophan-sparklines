@@ -3,6 +3,7 @@
 var config = require('./config.json'),
     Spark = require('./modules/sparks'),
     http = require('http'),
+    path = require('path'),
     url = require('url'),
     fs = require('fs'),
     
@@ -23,7 +24,7 @@ if(!config.ophanKey) {
 }
 
 function serveStatic(opts, res) {
-    fs.readFile(opts.filepath, function(err, data) {
+    fs.readFile(path.resolve(__dirname, opts.filepath), function(err, data) {
         if (!err) {
             res.writeHead(200, {
                 'Content-Type': opts.contentType,
