@@ -8,6 +8,7 @@ var config = require('./config.json'),
     
     statics = {
         "/test": { filepath: "public/test.html", contentType: "text/html" },
+        "/blank.png": { filepath: "public/blank.png", contentType: "image/png" },
         "/lodash.js": { filepath: "node_modules/lodash/lodash.js", contentType: "application/javascript"}
     };
 
@@ -70,7 +71,7 @@ http.createServer(function (req, res) {
                         res.end(buf, 'binary');
                     });
                 } else {
-                    res.end();
+                    serveStatic(statics["/blank.png"], res);
                 }
             });
         }
