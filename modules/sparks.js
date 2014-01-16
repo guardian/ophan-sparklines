@@ -140,12 +140,12 @@ function draw(data, opts) {
             ctx.lineTo(x, 2);
             ctx.lineTo(x, graphHeight + 2);
             ctx.lineWidth = 1;
-            ctx.strokeStyle = '#' + (hexColor || '666666');
+            ctx.strokeStyle = '#' + (hexColor || '999999');
             ctx.stroke();
 
             if (withFlag) {
-                ctx.fillStyle = '#' + (hexColor || '666666');
-                ctx.fillRect(x - 2, 0, 4, 2);
+                ctx.fillStyle = '#' + (hexColor || '999999');
+                ctx.fillRect(x - 2, 0, 2, 2);
             }
         };
 
