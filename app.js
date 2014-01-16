@@ -10,7 +10,7 @@ var config = require('./config.json'),
     statics = {
         "/test": { filepath: "public/test.html", contentType: "text/html" },
         "/blank.png": { filepath: "public/blank.png", contentType: "image/png" },
-        "/lodash.js": { filepath: "node_modules/lodash/lodash.js", contentType: "application/javascript"}
+        "/lodash.js": { filepath: "node_modules/lodash/dist/lodash.min.js", contentType: "application/javascript"}
     };
 
 if(!config.ophanHost) {
