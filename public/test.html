@@ -3,8 +3,7 @@
         <style>
             body {
                 font-family: arial;
-                color: #333333;
-                background: #eeeeee;
+                color: #666666;
             }
             #inputs {
                 overflow: auto;
@@ -21,40 +20,53 @@
                 float: left;
                 width: 200px;
             }
+            input[type="submit"] {
+                display: block;
+                margin: 10px 0 0 0;
+                font-size: 20px;
+            }
             #result {
                 padding: 1px 0 0 320px;
             }
             #url {
                 display: block;
                 text-decoration: none;
-                font-family: courier, monospace;
-                font-size: 12px;
-                color: #000099;
+                color: #004a83;
                 margin: 5px 0 20px 0;
-                white-space: nowrap;
             }
             #img {
                 display: inline-block;
                 margin: 10px 0 0 0;
                 padding: 10px;
                 background: #ffffff;
+                box-shadow: 1px 1px 15px 0px rgb(200, 200, 220);
             }
             #form {
                 float: left;
             }
+            h1 {
+                letter-spacing: -4px;
+                font-size: 48px;
+            }
+            .spark {
+                color: #98bcdb;
+            }
+            .plug {
+                color: #004a83;
+            }
         </style>
     </head>
     <body>
-        <h1>sparkplug</h1>
+        <h1><span class="spark">spark</span><span class="plug">plug</span></h1>
 
         <form id="form" action="?" onsubmit="return processForm(true);">
             <div id="inputs"></div>
-            <input type="submit" value="Get Graph" />
+            <input type="submit" value="Redraw spark & generate URL" />
         </form>
        
         <div id="result">
-            image url: <a href="" id="url" target="_blank"></a>
-            image png:<br />
+            url <a href="" id="url" target="_blank"></a>
+            png<br />
             <img id="img" src="" />
         </div>
 

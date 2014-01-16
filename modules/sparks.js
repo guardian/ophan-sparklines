@@ -58,8 +58,8 @@ function numWithCommas(x) {
     return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 }
 
-function eqNoCase(a, b) {
-    return a.toLowerCase() === b.toLowerCase();
+function containsStr(a, b) {
+    return a.toLowerCase().indexOf(b.toLowerCase()) > -1;
 }
 
 function hexToRgba(hex, alpha) {
@@ -75,11 +75,11 @@ function collateOphanData(data, opts) {
         });
 
     if(graphs.length && data.seriesData && data.seriesData.length) {
-        var graphTotal = _.find(graphs, function(g){ return eqNoCase(g.name, 'total'); }),
-            graphOther = _.find(graphs, function(g){ return eqNoCase(g.name, 'other'); });
+        var graphTotal = _.find(graphs, function(g){ return containsStr('total', g.name); }),
+            graphOther = _.find(graphs, function(g){ return containsStr('other', g.name); });
         
         _.each(data.seriesData, function(s){
-            var graphThis = _.find(graphs, function(g){ return eqNoCase(g.name, s.name); }) || graphOther;
+            var graphThis = _.find(graphs, function(g){ return containsStr(s.name, g.name); }) || graphOther;
 
             // Drop the last data point
             s.data.pop();

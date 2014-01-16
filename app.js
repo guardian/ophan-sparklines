@@ -26,7 +26,8 @@ function serveStatic(opts, res) {
         if (!err) {
             res.writeHead(200, {
                 'Content-Type': opts.contentType,
-                'Content-Length': data.length
+                'Content-Length': data.length,
+                'Cache-Control': 'public,max-age=3600'
             });
             res.end(data);
         }
@@ -81,5 +82,5 @@ http.createServer(function (req, res) {
 
     ophanReq.end();
 
-}).listen(3000);
+}).listen(8080);
 
