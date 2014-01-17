@@ -118,6 +118,8 @@ function collateOphanData(data, opts) {
 }
 
 function draw(data, opts) {
+    if (!data) { return; }
+
     var w = opts.width,
         h = opts.height,
         p = data.points,
