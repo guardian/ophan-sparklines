@@ -74,7 +74,7 @@ function collateOphanData(data, opts) {
             return { name: p[0], color: (p[1] || '666666') };
         });
 
-    if(graphs.length && data.seriesData && data.seriesData.length) {
+    if(graphs.length && data.seriesData && data.seriesData.length && data.seriesData[0].data && data.seriesData[0].data.length > 1) {
         var graphTotal = _.find(graphs, function(g){ return containsStr('total', g.name); }),
             graphOther = _.find(graphs, function(g){ return containsStr('other', g.name); });
         
