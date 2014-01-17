@@ -1,4 +1,4 @@
-Pageview Sparks
+SparkPlug
 ===============
 
 __Small server-generated graphs of Guardian content page-views. Uses Ophan data__. 
