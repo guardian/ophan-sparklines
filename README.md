@@ -1,4 +1,4 @@
-SparkPlug
+Ophan Sparklines
 ===============
 
 __Small server-generated graphs of Guardian content page-views. Uses Ophan data__. 
