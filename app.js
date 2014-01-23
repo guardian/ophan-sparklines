@@ -6,7 +6,8 @@ var config = require('./config.json'),
     path = require('path'),
     url = require('url'),
     fs = require('fs'),
-    
+    _ = require('lodash'),
+ 
     statics = {
         "/": { filepath: "public/index.html", contentType: "text/html" },
         "/blank.png": { filepath: "public/blank.png", contentType: "image/png" },
@@ -14,12 +15,12 @@ var config = require('./config.json'),
     };
 
 if(!config.ophanHost) {
-    console.log('Please set the "ophanHost" property in config.json');
+    console.log('Set the "ophanHost" property in config.json');
     process.exit(1);
 }
 
 if(!config.ophanKey) {
-    console.log('Please set the "ophanKey" property in config.json');
+    console.log('Set the "ophanKey" property in config.json');
     process.exit(1);
 }
 
@@ -41,7 +42,11 @@ http.createServer(function (req, res) {
         staticFile = statics[urlParts.pathname],        
         query = urlParts.query,
         ophanReq;
-    
+   
+    _.each(query, function(val, key, query) {
+	query[key] = _.isArray(val) ? val[0] : val;
+    });
+ 
     if (staticFile) {
         serveStatic(staticFile, res);
         return;
