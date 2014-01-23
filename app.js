@@ -8,7 +8,7 @@ var config = require('./config.json'),
     fs = require('fs'),
     
     statics = {
-        "/test": { filepath: "public/test.html", contentType: "text/html" },
+        "/": { filepath: "public/index.html", contentType: "text/html" },
         "/blank.png": { filepath: "public/blank.png", contentType: "image/png" },
         "/lodash.js": { filepath: "node_modules/lodash/dist/lodash.min.js", contentType: "application/javascript"}
     };
@@ -41,11 +41,18 @@ http.createServer(function (req, res) {
         staticFile = statics[urlParts.pathname],        
         query = urlParts.query,
         ophanReq;
-
+    
     if (staticFile) {
         serveStatic(staticFile, res);
         return;
     };
+
+    if (urlParts.pathname !== '/png') {
+        res.writeHead(301, {
+            'Location': '/'
+        });
+        res.end();
+    }
 
     ophanReq = http.request(
         {

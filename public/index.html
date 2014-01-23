@@ -22,8 +22,8 @@
             }
             input[type="submit"] {
                 display: block;
-                margin: 10px 0 0 0;
-                font-size: 20px;
+                margin: 10px 0 20px 0;
+                font-size: 16px;
             }
             #result {
                 padding: 1px 0 0 320px;
@@ -45,27 +45,33 @@
                 float: left;
             }
             h1 {
-                letter-spacing: -4px;
-                font-size: 48px;
+                letter-spacing: -2px;
+                font-size: 30px;
             }
-            .spark {
+            .ophan {
                 color: #98bcdb;
             }
-            .plug {
+            .sparklines {
                 color: #004a83;
+                margin: 0 0 0 8px;
             }
         </style>
     </head>
     <body>
-        <h1><span class="spark">spark</span><span class="plug">plug</span></h1>
+        <h1><span class="ophan">ophan</span><span class="sparklines">sparklines</span></h1>
 
         <form id="form" action="?" onsubmit="return processForm(true);">
             <div id="inputs"></div>
             <input type="submit" value="Redraw spark & generate URL" />
-        </form>
        
+            Examples:
+            <div><a href="?graphs=guardian:009,google:090,other:09f&showStats=1&showHours=1&width=100&height=40">Fronts Editor style</a></div>
+            <div><a href="?graphs=twitter:09f,facebook:0f9&showStats=1&showHours=1&width=100&height=40">Twitter, Facebook</a></div>
+            <div><a href="?graphs=guardian:009,google:090,other:09f&showStats=1&showHours=1&width=400&height=200&smoothing=0">Large and unsmoothed</a></div>
+        </form>
+
         <div id="result">
-            url <a href="" id="url" target="_blank"></a>
+            url <a href="" id="url"></a>
             png<br />
             <img id="img" src="" />
         </div>
@@ -111,10 +117,10 @@
                     })
                     .join('&'),
 
-                    url = baseUrl + '/?' + qStr;
+                    url = baseUrl + '/png?' + qStr;
 
                 if (reload) {
-                    window.location.href = "/test?" + qStr;
+                    window.location.href = "/?" + qStr;
                 } else {
                     document.getElementById("img").src = url;
                     document.getElementById("url").href = url;
