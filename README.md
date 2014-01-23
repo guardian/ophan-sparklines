@@ -6,7 +6,7 @@ __Small server-generated graphs of Guardian content page-views. Uses Ophan data_
 * Default rendering:  
 ![](./example/example01.png)  
 ```
-?page=http://www.theguardian.com/football/2014/jan/05/fa-cup-fourth-round-draw-live
+/png?page=http://www.theguardian.com/football/2014/jan/05/fa-cup-fourth-round-draw-live
 ```
 
 * Seperate graphs specified, dimensions doubled:  
@@ -83,5 +83,3 @@ $ npm install
 ```
 
 Create a file called `config.json` with `ophanHost` and `ophanKey` properties (see `sample-config.json`).
-
-Then in a browser: `http://localhost:8080/`
