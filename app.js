@@ -74,7 +74,7 @@ http.createServer(function (req, res) {
                         res.writeHead(200, {
                             'Content-Type': 'image/png',
                             'Content-Length': buf.length,
-                            'Cache-Control': 'public,max-age=30'
+                            'Cache-Control': 'public,max-age=60'
                         });
                         res.end(buf, 'binary');
                     });
