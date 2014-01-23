@@ -6,7 +6,7 @@ __Small server-generated graphs of Guardian content page-views. Uses Ophan data_
 * Default rendering:  
 ![](./example/example01.png)  
 ```
-?page=http://www.theguardian.com/football/2014/jan/05/fa-cup-fourth-round-draw-live
+/png?page=http://www.theguardian.com/football/2014/jan/05/fa-cup-fourth-round-draw-live
 ```
 
 * Seperate graphs specified, dimensions doubled:  
@@ -31,6 +31,10 @@ __Small server-generated graphs of Guardian content page-views. Uses Ophan data_
 If the number of data points is greater than the width of the graph, the points are resampled to fit. If the number of data points is less than the width, the graph is right-justified (so "now" aligns for vertically stacked graphs) and it's width is partially stretched to make the graph more readable. Smoothing is applied, and can be adjusted.
 
 It's useful to specify a `hotLevel` that reflects "significant page views per minute" for the type of content in question. This sets the upper y-scale of the graph. Activity beyond this level causes all the graph lines to compress down proportionally.
+
+### Query API
+
+The `/` URL displays a form for experimenting with options and producing example Sparkline URLs. Images are served from URLs starting `/png?...`
 
 
 ### Query API
@@ -84,4 +88,24 @@ $ npm install
 
 Create a file called `config.json` with `ophanHost` and `ophanKey` properties (see `sample-config.json`).
 
-Then in a browser: `http://localhost:8080/`
+### Depolyment tips
+
+##### Running on port 80
+
+To rewrite port 80 to port 8080 (or whatever) without using nginx, do this:
+
+```
+sudo iptables -t nat -A PREROUTING -i eth0 -p tcp --dport 80 -j REDIRECT --to-port 8080
+```
+Add it (minus sudo) to `/etc/rc.local` so that it happens on a reboot.
+
+##### As a persistent background process
+
+Install [forever](https://github.com/nodejitsu/forever):
+```
+$ npm install forever -g
+```
+Start the app:
+```
+forever start ~/ophan-sparklines/app.js
+```
