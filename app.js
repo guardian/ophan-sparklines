@@ -78,7 +78,7 @@ http.createServer(function (req, res) {
                     spark.toBuffer(function(err, buf){
                         res.writeHead(200, {
                             'Content-Type': 'image/png',
-                            'Content-Length': buf.length,
+                            'Content-Length': buf ? buf.length : 0,
                             'Cache-Control': 'public,max-age=60'
                         });
                         res.end(buf, 'binary');
