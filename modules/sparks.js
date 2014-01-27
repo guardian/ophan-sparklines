@@ -74,24 +74,20 @@ function collateOphanData(data, opts) {
             return { name: p[0], color: (p[1] || '666666') };
         });
 
-    if(graphs.length && data.seriesData && data.seriesData.length && data.seriesData[0].data && data.seriesData[0].data.length > 1) {
+    if(graphs.length && data.seriesData && data.seriesData.length && data.seriesData[0].data && data.seriesData[0].data.length) {
         var graphTotal = _.find(graphs, function(g){ return containsStr('total', g.name); }),
             graphOther = _.find(graphs, function(g){ return containsStr('other', g.name); });
         
         _.each(data.seriesData, function(s){
             var graphThis = _.find(graphs, function(g){ return containsStr(s.name, g.name); }) || graphOther;
 
-            // Drop the last data point
-            s.data.pop();
-
             _.each(_.filter([graphThis, graphTotal], function(g) { return g; }), function(graph) {
                 if (graph.data) {
-                    // ...sum additinal data into the graph
                     _.each(s.data, function(d, i) {
-                        graph.data[i] = graph.data[i] + d.count;
+                        graph.data[i] = (graph.data[i] || 0) + d;
                     });
                 } else {
-                    graph.data = _.pluck(s.data, 'count');
+                    graph.data = s.data;
                 }
             });
         });
@@ -111,8 +107,8 @@ function collateOphanData(data, opts) {
             seriesData: graphs,
             totalHits: data.totalHits,
             points: graphs[0].data.length,
-            startSec: _.first(data.seriesData[0].data).dateTime/1000,
-            endSec: _.last(data.seriesData[0].data).dateTime/1000
+            startSec: data.startDate/1000,
+            endSec: data.endDate/1000
         };
     }
 }
