@@ -37,8 +37,7 @@ if (cluster.isMaster) {
         console.error('disconnect!');
         cluster.fork();
     });
-
-    console.log('Started with ' + numCPUs + ' clusters');
+    console.log('Number of clusters: ' + numCPUs);
 } else {
     var domain = require('domain');
 
