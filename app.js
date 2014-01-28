@@ -15,7 +15,6 @@ var config = require('./config.json'),
     },
 
     cluster = require('cluster'),
-    numCPUs = require('os').cpus().length,
     PORT = +process.env.PORT || 8080;
 
 if(!config.ophanHost) {
@@ -29,7 +28,7 @@ if(!config.ophanKey) {
 }
 
 if (cluster.isMaster) {
-    for (var i = 0; i < numCPUs; i += 1) {
+    for (var i = 0; i < require('os').cpus().length; i += 1) {
         cluster.fork();
     }
 
@@ -37,7 +36,6 @@ if (cluster.isMaster) {
         console.error('disconnect!');
         cluster.fork();
     });
-    console.log('Number of clusters: ' + numCPUs);
 } else {
     var domain = require('domain');
 
