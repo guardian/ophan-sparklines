@@ -12,7 +12,11 @@ var config = require('./config.json'),
         "/": { filepath: "public/index.html", contentType: "text/html" },
         "/blank.png": { filepath: "public/blank.png", contentType: "image/png" },
         "/lodash.js": { filepath: "node_modules/lodash/dist/lodash.min.js", contentType: "application/javascript"}
-    };
+    },
+
+    cluster = require('cluster'),
+    numCPUs = require('os').cpus().length,
+    PORT = +process.env.PORT || 8080;
 
 if(!config.ophanHost) {
     console.log('Set the "ophanHost" property in config.json');
@@ -22,6 +26,52 @@ if(!config.ophanHost) {
 if(!config.ophanKey) {
     console.log('Set the "ophanKey" property in config.json');
     process.exit(1);
+}
+
+if (cluster.isMaster) {
+    for (var i = 0; i < numCPUs; i += 1) {
+        cluster.fork();
+    }
+
+    cluster.on('disconnect', function(worker) {
+        console.error('disconnect!');
+        cluster.fork();
+    });
+
+    console.log('Started with ' + numCPUs + ' clusters');
+} else {
+    var domain = require('domain');
+
+    var server = require('http').createServer(function(req, res) {
+        var d = domain.create();
+        d.on('error', function(er) {
+            console.error('error', er.stack);
+            try {
+                var killtimer = setTimeout(function() {
+                    process.exit(1);
+                }, 30000);
+                killtimer.unref();
+
+                server.close();
+
+                cluster.worker.disconnect();
+
+                res.statusCode = 500;
+                res.setHeader('content-type', 'text/plain');
+                res.end('Oops, there was a problem!\n');
+            } catch (er2) {
+                console.error('Error sending 500!', er2.stack);
+            }
+        });
+
+        d.add(req);
+        d.add(res);
+
+        d.run(function() {
+            handleRequest(req, res);
+        });
+    });
+    server.listen(PORT);
 }
 
 function serveStatic(opts, res) {
@@ -37,7 +87,7 @@ function serveStatic(opts, res) {
     });
 }
 
-http.createServer(function (req, res) {
+function handleRequest(req, res) {
     var urlParts = url.parse(req.url, true),
         staticFile = statics[urlParts.pathname],        
         query = urlParts.query,
@@ -96,5 +146,4 @@ http.createServer(function (req, res) {
 
     ophanReq.end();
 
-}).listen(8080);
-
+}
