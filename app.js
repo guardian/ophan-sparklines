@@ -56,7 +56,7 @@ function handleRequest(req, res) {
     ophanReq = http.request(
         {
           host: config.ophanHost,
-          path: '/api/breakdown/sparklines?key=' + config.ophanKey + (query.page ? '&path=' + url.parse(query.page).pathname : '')
+          path: '/api/breakdown/sparklines?api-key=' + config.ophanKey + (query.page ? '&path=' + url.parse(query.page).pathname : '')
         },
         function(proxied) {
             var ophanData = '',
