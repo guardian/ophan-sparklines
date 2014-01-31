@@ -68,7 +68,7 @@ All parameters are optional.
 
 * __hotLevel__:  upper y-bound of the graph, in pageviews-per-minute. Beyond this, the whole graph compresses vertically. Default is `50` which is appropriate for articles; fronts need a much higher figure. Recent activity beyond this level causes a bold graph line (and a half-bold line at half this level). 
 
-* __hotPeriod__ : number of minutes over which to calcuate the "recent activity" above. Default is `5`.
+* __hotPeriod__ : number of minutes over which to calcuate the "recent activity". Default is `5`.
 
 * __alpha__ : opacity of the graph lines. Range from 0 - 1. Default is `0.7`.
 
