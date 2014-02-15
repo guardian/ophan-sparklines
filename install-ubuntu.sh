@@ -4,7 +4,7 @@ sudo iptables -t nat -A PREROUTING -i eth0 -p tcp --dport 80 -j REDIRECT --to-po
 
 cd
 
-sudo add-apt-repository ppa:chris-lea/node.js
+sudo add-apt-repository -y ppa:chris-lea/node.js
 sudo apt-get update 
 sudo apt-get -y install git-core
 sudo apt-get install python-software-properties python g++ make
