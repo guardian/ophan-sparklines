@@ -11,7 +11,7 @@ git clone https://github.com/stephanfowler/ophan-sparklines.git
 
 cd ophan-sparklines
 
-npm install
+npm install --registry http://registry.npmjs.org/
+sudo npm install forever -g --registry http://registry.npmjs.org/
 
-sudo npm install forever -g
 forever start app.js
