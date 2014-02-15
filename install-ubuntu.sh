@@ -16,5 +16,5 @@ cd ophan-sparklines
 
 npm install
 
-npm install forever -g
+sudo npm install forever -g
 forever start app.js
