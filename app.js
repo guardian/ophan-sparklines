@@ -57,7 +57,7 @@ function handleRequest(req, res) {
     }
    
     _.each(query, function(val, key, query) {
-	    query[key] = _.isArray(val) ? val[0] : val;
+        query[key] = _.isArray(val) ? val[0] : val;
     });
 
     ophanReq = http.request(
