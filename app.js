@@ -36,11 +36,13 @@ function handleRequest(req, res) {
         staticFile = statics[urlParts.pathname],        
         query = urlParts.query,
         ophanReq;
-   
-    _.each(query, function(val, key, query) {
-	query[key] = _.isArray(val) ? val[0] : val;
-    });
  
+    if (urlParts.pathname === '/healthcheck') {
+        res.writeHead(200);
+        res.end();
+        return;
+    };
+
     if (staticFile) {
         serveStatic(staticFile, res);
         return;
@@ -51,7 +53,12 @@ function handleRequest(req, res) {
             'Location': '/'
         });
         res.end();
+        return;
     }
+   
+    _.each(query, function(val, key, query) {
+	    query[key] = _.isArray(val) ? val[0] : val;
+    });
 
     ophanReq = http.request(
         {
